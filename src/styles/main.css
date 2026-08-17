@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+@import '@phosphor-icons/web/fill';
+@import './components.css';
+
+@source "../../index.html";
+
+@theme {
+  /* ---- Backgrounds (docs/design-system.md §1) ---- */
+  --color-base: #121212;
+  --color-press: #000000;
+  --color-elevated: #1f1f1f;
+  --color-elevated-hover: #2a2a2a;
+  --color-elevated-press: #191919;
+  --color-tinted: rgba(255, 255, 255, 0.1);
+  --color-tinted-hover: rgba(255, 255, 255, 0.14);
+  --color-tinted-press: rgba(255, 255, 255, 0.21);
+  --color-highlight: #1f1f1f;
+  --color-decorative: #ffffff;
+  --color-decorative-subdued: #292929;
+
+  /* ---- Text ---- */
+  --color-subdued: #b3b3b3;
+  --color-muted: #7c7c7c;
+  --color-announcement: #539df5;
+  --color-positive: #1ed760;
+  --color-warning: #ffa42b;
+  --color-negative: #f3727f;
+
+  /* ---- Accents ---- */
+  --color-accent: #1ed760;
+  --color-essential-announcement: #1278f2;
+  --color-essential-negative: #ed2c3f;
+  --color-essential-warning: #ffa42b;
+
+  /* ---- Typography (docs/design-system.md §2) ---- */
+  --font-body: SpotifyMixUI, 'CircularSp-Arab', 'CircularSp-Hebr',
+    'CircularSp-Cyrl', 'CircularSp-Grek', 'CircularSp-Deva', 'Helvetica Neue',
+    helvetica, arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo,
+    'MS Gothic';
+  --font-title: SpotifyMixUITitle, 'CircularSp-Arab', 'CircularSp-Hebr',
+    'CircularSp-Cyrl', 'CircularSp-Grek', 'CircularSp-Deva', 'Helvetica Neue',
+    helvetica, arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo,
+    'MS Gothic';
+  --font-mono: SpotifyMixMono, ui-monospace, monospace;
+
+  /* ---- Motion (docs/design-system.md §5) ---- */
+  --ease-productive: cubic-bezier(0.3, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.8, 0, 1, 1);
+  --duration-shortest-1: 50ms;
+  --duration-shortest-2: 100ms;
+  --duration-shortest-3: 150ms;
+  --duration-shortest-4: 200ms;
+  --duration-short-1: 250ms;
+  --duration-short-2: 300ms;
+
+  /* ---- Spacing scale (docs/design-system.md §3) ---- */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-8: 32px;
+  --spacing-tighter-4: 4px;
+  --spacing-tighter-2: 8px;
+  --spacing-tighter: 12px;
+  --spacing-base: 16px;
+  --spacing-looser: 24px;
+  --spacing-looser-2: 32px;
+  --spacing-looser-3: 48px;
+  --spacing-looser-4: 64px;
+  --spacing-looser-5: 96px;
+  --spacing-looser-6: 128px;
+
+  /* ---- Radii (docs/design-system.md §4) ---- */
+  --corner-radius-smaller: 2px;
+  --corner-radius-base: 4px;
+  --corner-radius-larger: 6px;
+  --corner-radius-larger-2: 8px;
+  --corner-radius-larger-3: 16px;
+  --corner-radius-rounded: 9999px;
+
+  /* ---- Layout constants (docs/design-system.md §6) ---- */
+  --spacing-topbar: 64px;
+  --spacing-playerbar: 66px;
+  --spacing-sidebar: 232px;
+  --spacing-sidebar-min: 200px;
+  --spacing-sidebar-max: 280px;
+  --spacing-card: 178px;
+  --spacing-volume: 90px;
+  --spacing-contentmax: 1955px;
+  --spacing-control: 48px;
+  --spacing-control-sm: 32px;
+  --spacing-control-lg: 56px;
+  --spacing-glyph: 24px;
+  --spacing-glyph-sm: 16px;
+  --spacing-glyph-play: 20px;
+
+  /* ---- Shadows ---- */
+  --shadow-overlay: 0 4px 12px 0 rgba(0, 0, 0, 0.3);
+  --shadow-drop: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-base);
+    color: var(--color-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-title);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: 0;
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}

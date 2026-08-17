@@ -1,0 +1,1767 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Spotify homepage clone - web player interface built with Vite and Tailwind CSS for educational purposes."
+    />
+    <title>Spotify - Web Player: Music for everyone</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- ===== Top Bar (full width) ===== -->
+      <header class="top-bar app-topbar">
+        <nav class="top-bar__left flex items-center gap-2" aria-label="Main">
+          <a
+            href="/"
+            class="top-bar__logo flex h-8 shrink-0 items-center px-1"
+            aria-label="Spotify"
+          >
+            <i
+              class="ph-fill ph-spotify-logo text-[32px] leading-none text-white"
+              aria-hidden="true"
+            ></i>
+          </a>
+          <a href="/" class="nav-item is-active" aria-current="page">
+            <i
+              class="ph-fill ph-house text-[24px] leading-none"
+              aria-hidden="true"
+            ></i>
+            <span>Home</span>
+          </a>
+          <a href="#" class="nav-item" aria-label="Search">
+            <i
+              class="ph-fill ph-magnifying-glass text-[24px] leading-none"
+              aria-hidden="true"
+            ></i>
+            <span>Search</span>
+          </a>
+          <a href="#" class="nav-item hidden md:flex" aria-label="Browse">
+            <i
+              class="ph-fill ph-squares-four text-[24px] leading-none"
+              aria-hidden="true"
+            ></i>
+            <span>Browse</span>
+          </a>
+        </nav>
+        <div class="top-bar__actions flex items-center gap-2">
+          <a href="#" class="pill-button pill-button--ghost px-3 py-2 text-sm"
+            >Premium</a
+          >
+          <a
+            href="#"
+            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm md:inline-flex"
+            >Support</a
+          >
+          <a
+            href="#"
+            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm lg:inline-flex"
+          >
+            <i
+              class="ph-fill ph-download text-[16px] leading-none"
+              aria-hidden="true"
+            ></i>
+            <span>Download</span>
+          </a>
+          <a
+            href="#"
+            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm lg:inline-flex"
+            >Install App</a
+          >
+          <div class="flex items-center gap-1">
+            <a href="#" class="pill-button pill-button--ghost px-3 py-2 text-sm"
+              >Sign up</a
+            >
+            <a
+              href="#"
+              class="pill-button pill-button--white px-8 py-2 text-base"
+              >Log in</a
+            >
+          </div>
+        </div>
+      </header>
+
+      <!-- ===== Sidebar: Library only ===== -->
+      <aside class="app-sidebar" aria-label="Sidebar">
+        <section class="library" aria-label="Your Library">
+          <div class="library__header flex items-center justify-between px-2">
+            <button
+              class="flex items-center gap-2 rounded-full px-2 py-2 text-subdued transition-colors duration-200 ease-productive hover:text-white"
+              aria-label="Your Library"
+            >
+              <i
+                class="ph-fill ph-books text-[24px] leading-none"
+                aria-hidden="true"
+              ></i>
+              <span class="text-[16px] font-bold">Your Library</span>
+            </button>
+            <button
+              class="flex h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
+              aria-label="Create playlist"
+            >
+              <i
+                class="ph-fill ph-plus text-[16px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+
+          <div class="library__content mt-2 flex flex-col gap-2 px-2">
+            <div class="rounded-lg bg-elevated p-4">
+              <p class="text-[16px] font-bold text-white">
+                Create your first playlist
+              </p>
+              <p class="mt-1 text-[14px] leading-snug text-subdued">
+                It's easy, we'll help you
+              </p>
+              <a
+                href="#"
+                class="pill-button pill-button--white mt-4 px-4 py-2 text-sm"
+                >Create playlist</a
+              >
+            </div>
+            <div class="rounded-lg bg-elevated p-4">
+              <p class="text-[16px] font-bold text-white">
+                Let's find some podcasts to follow
+              </p>
+              <p class="mt-1 text-[14px] leading-snug text-subdued">
+                We'll keep you updated on new episodes
+              </p>
+              <a
+                href="#"
+                class="pill-button pill-button--white mt-4 px-4 py-2 text-sm"
+                >Browse podcasts</a
+              >
+            </div>
+          </div>
+
+          <ul
+            class="library__links flex flex-wrap gap-x-3 gap-y-2 px-2 py-4 text-[11px] font-normal text-subdued"
+          >
+            <li>
+              <a href="#" class="hover:text-white hover:underline">Legal</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white hover:underline"
+                >Safety &amp; Privacy Center</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-white hover:underline"
+                >Privacy Policy</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-white hover:underline">Cookies</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white hover:underline">About Ads</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white hover:underline"
+                >Accessibility</a
+              >
+            </li>
+          </ul>
+        </section>
+      </aside>
+
+      <!-- ===== Main View ===== -->
+      <main id="main-view" class="app-main">
+        <div
+          class="app-main__content mx-auto w-full max-w-contentmax px-8 pt-4"
+        >
+          <!-- <h1 class="home-title mb-8 text-2xl font-bold text-white">Home</h1> -->
+
+          <!-- ===== Trending songs ===== -->
+          <section class="section-group" aria-labelledby="trending-songs">
+            <header class="section-group__header">
+              <h2 class="section-group__title" id="trending-songs">
+                <a href="/section/0JQ5DB5E8N831KzFzsBBQ2">Trending songs</a>
+              </h2>
+              <div class="section-group__controls">
+                <a
+                  href="/section/0JQ5DB5E8N831KzFzsBBQ2"
+                  class="section-group__show-all"
+                  >Show all</a
+                >
+              </div>
+            </header>
+            <div class="card-carousel">
+              <button
+                class="carousel-nav"
+                type="button"
+                aria-label="Previous"
+                disabled
+              >
+                <i
+                  class="ph-fill ph-caret-left text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <ul class="card-grid" aria-label="Trending songs">
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/5cyk2uXAfA6KFtxW9Fw7TO"
+                    aria-label="SECRET (feat. Quang Hùng MasterD, CODYNAMVO, CONGB & Wren Evans)"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02fa545713f7c1bd393afe0cb8"
+                      alt="Cover of SECRET (feat. Quang Hùng MasterD, CODYNAMVO, CONGB & Wren Evans)"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/5cyk2uXAfA6KFtxW9Fw7TO"
+                      aria-label="Play SECRET (feat. Quang Hùng MasterD, CODYNAMVO, CONGB & Wren Evans)"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/5cyk2uXAfA6KFtxW9Fw7TO"
+                      >SECRET (feat. Quang Hùng MasterD, CODYNAMVO, CONGB &amp;
+                      Wren Evans)</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/5cyk2uXAfA6KFtxW9Fw7TO"
+                      >TINH HÀ &quot;SAY HI&quot;, Quang Hùng MasterD,
+                      CODYNAMVO, CONGB</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/2AKrJz0CKmx3LJz3wgrxsL"
+                    aria-label="Thiên Đường Với Người Thương"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e0288811dd21038a8ed8521b347"
+                      alt="Cover of Thiên Đường Với Người Thương"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/2AKrJz0CKmx3LJz3wgrxsL"
+                      aria-label="Play Thiên Đường Với Người Thương"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/2AKrJz0CKmx3LJz3wgrxsL"
+                      >Thiên Đường Với Người Thương</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/2AKrJz0CKmx3LJz3wgrxsL"
+                      >Phương Mỹ Chi, DTAP</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/4cgngB4bVvrPY0CWa37xSI"
+                    aria-label="CILU"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02c99de546e894bbaebb6b310c"
+                      alt="Cover of CILU"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/4cgngB4bVvrPY0CWa37xSI"
+                      aria-label="Play CILU"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/4cgngB4bVvrPY0CWa37xSI"
+                      >CILU</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/4cgngB4bVvrPY0CWa37xSI"
+                      >Da LAB, JGKiD (Da LAB), MPaKK</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/6MTfGMNETk4s6kYm30QBnF"
+                    aria-label="SAO PHẢI XOẮN"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02dcf5b626074801e67d948b7b"
+                      alt="Cover of SAO PHẢI XOẮN"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/6MTfGMNETk4s6kYm30QBnF"
+                      aria-label="Play SAO PHẢI XOẮN"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/6MTfGMNETk4s6kYm30QBnF"
+                      >SAO PHẢI XOẮN</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/6MTfGMNETk4s6kYm30QBnF"
+                      >Anh Trai Vượt Ngàn Chông Gai, K.O, Osad, Hồ Đông Quan</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/4ps1EnoRoTMzZJPLvcGZdl"
+                    aria-label="HẸN GẶP LẠI ANH Ở MỘT KHUNG TRỜI KHÁC"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02c690d86d9195af259c91b1e5"
+                      alt="Cover of HẸN GẶP LẠI ANH Ở MỘT KHUNG TRỜI KHÁC"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/4ps1EnoRoTMzZJPLvcGZdl"
+                      aria-label="Play HẸN GẶP LẠI ANH Ở MỘT KHUNG TRỜI KHÁC"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/4ps1EnoRoTMzZJPLvcGZdl"
+                      >HẸN GẶP LẠI ANH Ở MỘT KHUNG TRỜI KHÁC</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/4ps1EnoRoTMzZJPLvcGZdl"
+                      >Phùng Khánh Linh</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/2d0AkZUJV30oIOJAeEyzC6"
+                    aria-label="Hootie Frutti"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e025631546bdc010851494d88ba"
+                      alt="Cover of Hootie Frutti"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/2d0AkZUJV30oIOJAeEyzC6"
+                      aria-label="Play Hootie Frutti"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/2d0AkZUJV30oIOJAeEyzC6"
+                      >Hootie Frutti</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/2d0AkZUJV30oIOJAeEyzC6"
+                      >KATSEYE</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/2QYsNOcyHo2ZwdTDUfZ3O0"
+                    aria-label="Chiếu"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02843fbfc50b41d8c9eeef6644"
+                      alt="Cover of Chiếu"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/2QYsNOcyHo2ZwdTDUfZ3O0"
+                      aria-label="Play Chiếu"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/2QYsNOcyHo2ZwdTDUfZ3O0"
+                      >Chiếu</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/2QYsNOcyHo2ZwdTDUfZ3O0"
+                      >LAMOON</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/2C6pWzORsnASomN7Npq8J0"
+                    aria-label="Không Dám Nói Chia Tay"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e024143a17f2fc698ae0391ba92"
+                      alt="Cover of Không Dám Nói Chia Tay"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/2C6pWzORsnASomN7Npq8J0"
+                      aria-label="Play Không Dám Nói Chia Tay"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/2C6pWzORsnASomN7Npq8J0"
+                      >Không Dám Nói Chia Tay</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/2C6pWzORsnASomN7Npq8J0"
+                      >Hà Nhi</a
+                    >
+                  </div>
+                </li>
+              </ul>
+              <button class="carousel-nav" type="button" aria-label="Next">
+                <i
+                  class="ph-fill ph-caret-right text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- ===== Popular artists ===== -->
+          <section class="section-group" aria-labelledby="popular-artists">
+            <header class="section-group__header">
+              <h2 class="section-group__title" id="popular-artists">
+                <a href="/section/0JQ5DAnM3wGh0gz1MXnu3C">Popular artists</a>
+              </h2>
+              <div class="section-group__controls">
+                <a
+                  href="/section/0JQ5DAnM3wGh0gz1MXnu3C"
+                  class="section-group__show-all"
+                  >Show all</a
+                >
+              </div>
+            </header>
+            <div class="card-carousel">
+              <button
+                class="carousel-nav"
+                type="button"
+                aria-label="Previous"
+                disabled
+              >
+                <i
+                  class="ph-fill ph-caret-left text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <ul class="card-grid" aria-label="Popular artists">
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/5dfZ5uSmzR7VQK0udbAVpf"
+                    aria-label="Sơn Tùng M-TP"
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab676161000051748885185d1e914c51c15c3a13"
+                      alt="Sơn Tùng M-TP"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/5dfZ5uSmzR7VQK0udbAVpf"
+                      aria-label="Play Sơn Tùng M-TP"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/5dfZ5uSmzR7VQK0udbAVpf"
+                      >Sơn Tùng M-TP</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/5dfZ5uSmzR7VQK0udbAVpf"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/6CGGvCBHWqQ4HXtn5aLhbh"
+                    aria-label="SOOBIN"
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab6761610000517430db194110c51d9e7fd3c7e7"
+                      alt="SOOBIN"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/6CGGvCBHWqQ4HXtn5aLhbh"
+                      aria-label="Play SOOBIN"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/6CGGvCBHWqQ4HXtn5aLhbh"
+                      >SOOBIN</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/6CGGvCBHWqQ4HXtn5aLhbh"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/5HZtdKfC4xU0wvhEyYDWiY"
+                    aria-label="HIEUTHUHAI"
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab67616100005174f39f3b8365b39fd757b442d7"
+                      alt="HIEUTHUHAI"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/5HZtdKfC4xU0wvhEyYDWiY"
+                      aria-label="Play HIEUTHUHAI"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/5HZtdKfC4xU0wvhEyYDWiY"
+                      >HIEUTHUHAI</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/5HZtdKfC4xU0wvhEyYDWiY"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/6zUWZmyi5MLOEynQ5wCI5f"
+                    aria-label="Da LAB"
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab6761610000517462c092ca08054a8ce883ef7e"
+                      alt="Da LAB"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/6zUWZmyi5MLOEynQ5wCI5f"
+                      aria-label="Play Da LAB"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/6zUWZmyi5MLOEynQ5wCI5f"
+                      >Da LAB</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/6zUWZmyi5MLOEynQ5wCI5f"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/7Cp2hGcriAaDUAWpXnSEwm"
+                    aria-label="buitruonglinh"
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab6761610000517447c2f0663c194a6534ef13b0"
+                      alt="buitruonglinh"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/7Cp2hGcriAaDUAWpXnSEwm"
+                      aria-label="Play buitruonglinh"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/7Cp2hGcriAaDUAWpXnSEwm"
+                      >buitruonglinh</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/7Cp2hGcriAaDUAWpXnSEwm"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/artist/57g2v7gJZepcwsuwssIfZs"
+                    aria-label="Vũ."
+                  ></a>
+
+                  <div class="media-card__cover media-card__cover--round">
+                    <img
+                      src="https://i.scdn.co/image/ab676161000051742d7150aa7e90e9a85610ab3d"
+                      alt="Vũ."
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/artist/57g2v7gJZepcwsuwssIfZs"
+                      aria-label="Play Vũ."
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/artist/57g2v7gJZepcwsuwssIfZs"
+                      >Vũ.</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/artist/57g2v7gJZepcwsuwssIfZs"
+                      >Artist</a
+                    >
+                  </div>
+                </li>
+              </ul>
+              <button class="carousel-nav" type="button" aria-label="Next">
+                <i
+                  class="ph-fill ph-caret-right text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- ===== Popular albums and singles ===== -->
+          <section class="section-group" aria-labelledby="popular-albums">
+            <header class="section-group__header">
+              <h2 class="section-group__title" id="popular-albums">
+                <a href="/section/0JQ5DAnM3wGh0gz1MXnu3B"
+                  >Popular albums and singles</a
+                >
+              </h2>
+              <div class="section-group__controls">
+                <a
+                  href="/section/0JQ5DAnM3wGh0gz1MXnu3B"
+                  class="section-group__show-all"
+                  >Show all</a
+                >
+              </div>
+            </header>
+            <div class="card-carousel">
+              <button
+                class="carousel-nav"
+                type="button"
+                aria-label="Previous"
+                disabled
+              >
+                <i
+                  class="ph-fill ph-caret-left text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <ul class="card-grid" aria-label="Popular albums and singles">
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/1AaxmI2e1HRhbwe9XJGPnT"
+                    aria-label="m-tp M-TP"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02794744c57c9f35db88249842"
+                      alt="Cover of m-tp M-TP"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/1AaxmI2e1HRhbwe9XJGPnT"
+                      aria-label="Play m-tp M-TP"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/1AaxmI2e1HRhbwe9XJGPnT"
+                      >m-tp M-TP</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/1AaxmI2e1HRhbwe9XJGPnT"
+                      >Sơn Tùng M-TP</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/4faMbTZifuYsBllYHZsFKJ"
+                    aria-label="Ai Cũng Phải Bắt Đầu Từ Đâu Đó"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02c006b0181a3846c1c63e178f"
+                      alt="Cover of Ai Cũng Phải Bắt Đầu Từ Đâu Đó"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/4faMbTZifuYsBllYHZsFKJ"
+                      aria-label="Play Ai Cũng Phải Bắt Đầu Từ Đâu Đó"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/4faMbTZifuYsBllYHZsFKJ"
+                      >Ai Cũng Phải Bắt Đầu Từ Đâu Đó</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/4faMbTZifuYsBllYHZsFKJ"
+                      >HIEUTHUHAI</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/5pSk3c3wVwnb2arb6ohCPU"
+                    aria-label="GOLDEN"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02741fd4807f442af3f7359316"
+                      alt="Cover of GOLDEN"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/5pSk3c3wVwnb2arb6ohCPU"
+                      aria-label="Play GOLDEN"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/5pSk3c3wVwnb2arb6ohCPU"
+                      >GOLDEN</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/5pSk3c3wVwnb2arb6ohCPU"
+                      >Jung Kook</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/1wmnEWgcDdCcOujQpLwYxc"
+                    aria-label="THE WXRDIES"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e02f3b9c8061be9fc0bdebad64e"
+                      alt="Cover of THE WXRDIES"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/1wmnEWgcDdCcOujQpLwYxc"
+                      aria-label="Play THE WXRDIES"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/1wmnEWgcDdCcOujQpLwYxc"
+                      >THE WXRDIES</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/1wmnEWgcDdCcOujQpLwYxc"
+                      >Wxrdie</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/03ZYR4zwCrkSsXTROnK2d0"
+                    aria-label="Đánh Đổi"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e0292824dc99ef88e1bd6d79904"
+                      alt="Cover of Đánh Đổi"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/03ZYR4zwCrkSsXTROnK2d0"
+                      aria-label="Play Đánh Đổi"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/03ZYR4zwCrkSsXTROnK2d0"
+                      >Đánh Đổi</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/03ZYR4zwCrkSsXTROnK2d0"
+                      >Obito, Shiki</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/album/5tlCVkYaDAmAtJ5YxejpWi"
+                    aria-label="BẬT NÓ LÊN"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://i.scdn.co/image/ab67616d00001e0299967cdb30e67d5b22ce6843"
+                      alt="Cover of BẬT NÓ LÊN"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/album/5tlCVkYaDAmAtJ5YxejpWi"
+                      aria-label="Play BẬT NÓ LÊN"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/album/5tlCVkYaDAmAtJ5YxejpWi"
+                      >BẬT NÓ LÊN</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/album/5tlCVkYaDAmAtJ5YxejpWi"
+                      >SOOBIN</a
+                    >
+                  </div>
+                </li>
+              </ul>
+              <button class="carousel-nav" type="button" aria-label="Next">
+                <i
+                  class="ph-fill ph-caret-right text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- ===== Popular radio ===== -->
+          <section class="section-group" aria-labelledby="popular-radio">
+            <header class="section-group__header">
+              <h2 class="section-group__title" id="popular-radio">
+                <a href="/section/0JQ5DAnM3wGh0gz1MXnu4h">Popular radio</a>
+              </h2>
+              <div class="section-group__controls">
+                <a
+                  href="/section/0JQ5DAnM3wGh0gz1MXnu4h"
+                  class="section-group__show-all"
+                  >Show all</a
+                >
+              </div>
+            </header>
+            <div class="card-carousel">
+              <button
+                class="carousel-nav"
+                type="button"
+                aria-label="Previous"
+                disabled
+              >
+                <i
+                  class="ph-fill ph-caret-left text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <ul class="card-grid" aria-label="Popular radio">
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4BOudo0mIzwZ"
+                    aria-label="Vũ. Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/57g2v7gJZepcwsuwssIfZs/en"
+                      alt="Cover of Vũ. Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4BOudo0mIzwZ"
+                      aria-label="Play Vũ. Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4BOudo0mIzwZ"
+                      >Vũ. Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4BOudo0mIzwZ"
+                      >With Da LAB, Vũ Cát Tường, SOOBIN and more</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4pcdtow1yIdx"
+                    aria-label="Hà Anh Tuấn Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/3FwYnbtGNt8hJfjNuOfpeG/en-GB"
+                      alt="Cover of Hà Anh Tuấn Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4pcdtow1yIdx"
+                      aria-label="Play Hà Anh Tuấn Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4pcdtow1yIdx"
+                      >Hà Anh Tuấn Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4pcdtow1yIdx"
+                      >With Bùi Anh Tuấn, Phan Mạnh Quỳnh, Vũ. and more</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4uNfZ5k0gw5M"
+                    aria-label="SOOBIN Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/6CGGvCBHWqQ4HXtn5aLhbh/en-GB"
+                      alt="Cover of SOOBIN Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4uNfZ5k0gw5M"
+                      aria-label="Play SOOBIN Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4uNfZ5k0gw5M"
+                      >SOOBIN Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4uNfZ5k0gw5M"
+                      >With Da LAB, JustaTee, Vũ Cát Tường and more</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4s2rxfOKtG1a"
+                    aria-label="Sơn Tùng M-TP Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/5dfZ5uSmzR7VQK0udbAVpf/en-GB"
+                      alt="Cover of Sơn Tùng M-TP Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4s2rxfOKtG1a"
+                      aria-label="Play Sơn Tùng M-TP Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4s2rxfOKtG1a"
+                      >Sơn Tùng M-TP Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4s2rxfOKtG1a"
+                      >With Da LAB, JustaTee, HIEUTHUHAI and more</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4vJnCypODcEw"
+                    aria-label="Dangrangto Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/5xY6E5PMZNtz9jDvxTRiGI/en-GB"
+                      alt="Cover of Dangrangto Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4vJnCypODcEw"
+                      aria-label="Play Dangrangto Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4vJnCypODcEw"
+                      >Dangrangto Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4vJnCypODcEw"
+                      >With Obito, Wxrdie, HIEUTHUHAI and more</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZF1E4BOisPQhvWuz"
+                    aria-label="buitruonglinh Radio"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/radio/artist/7Cp2hGcriAaDUAWpXnSEwm/en-GB"
+                      alt="Cover of buitruonglinh Radio"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZF1E4BOisPQhvWuz"
+                      aria-label="Play buitruonglinh Radio"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZF1E4BOisPQhvWuz"
+                      >buitruonglinh Radio</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZF1E4BOisPQhvWuz"
+                      >With SOOBIN, W/N, Ronboogz and more</a
+                    >
+                  </div>
+                </li>
+              </ul>
+              <button class="carousel-nav" type="button" aria-label="Next">
+                <i
+                  class="ph-fill ph-caret-right text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- ===== Featured Charts ===== -->
+          <section class="section-group" aria-labelledby="featured-charts">
+            <header class="section-group__header">
+              <h2 class="section-group__title" id="featured-charts">
+                <a href="/section/0JQ5DAzQHECxDlYNI6xD1g">Featured Charts</a>
+              </h2>
+              <div class="section-group__controls">
+                <a
+                  href="/section/0JQ5DAzQHECxDlYNI6xD1g"
+                  class="section-group__show-all"
+                  >Show all</a
+                >
+              </div>
+            </header>
+            <div class="card-carousel">
+              <button
+                class="carousel-nav"
+                type="button"
+                aria-label="Previous"
+                disabled
+              >
+                <i
+                  class="ph-fill ph-caret-left text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <ul class="card-grid" aria-label="Featured Charts">
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
+                    aria-label="Top Songs - Global"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://charts-images.scdn.co/assets/locale_en/regional/weekly/region_global_default.jpg"
+                      alt="Cover of Top Songs - Global"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
+                      aria-label="Play Top Songs - Global"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
+                      >Top Songs - Global</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
+                      >Your weekly update of the most played tracks right now -
+                      Global.</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
+                    aria-label="Top Songs - Vietnam"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://charts-images.scdn.co/assets/locale_en/regional/weekly/region_vn_default.jpg"
+                      alt="Cover of Top Songs - Vietnam"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
+                      aria-label="Play Top Songs - Vietnam"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
+                      >Top Songs - Vietnam</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
+                      >Your weekly update of the most played tracks right now -
+                      Vietnam.</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
+                    aria-label="Top 50 - Global"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_default.jpg"
+                      alt="Cover of Top 50 - Global"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
+                      aria-label="Play Top 50 - Global"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
+                      >Top 50 - Global</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
+                      >Your daily update of the most played tracks right now -
+                      Global.</a
+                    >
+                  </div>
+                </li>
+                <li class="media-card">
+                  <a
+                    class="media-card__link"
+                    href="/playlist/37i9dQZEVXbLdGSmz6xilI"
+                    aria-label="Top 50 - Vietnam"
+                  ></a>
+
+                  <div class="media-card__cover">
+                    <img
+                      src="https://charts-images.scdn.co/assets/locale_en/regional/daily/region_vn_default.jpg"
+                      alt="Cover of Top 50 - Vietnam"
+                      loading="lazy"
+                      width="178"
+                      height="178"
+                    />
+                    <a
+                      class="media-card__play"
+                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
+                      aria-label="Play Top 50 - Vietnam"
+                    >
+                      <i
+                        class="ph-fill ph-play text-[20px] leading-none"
+                        aria-hidden="true"
+                      ></i>
+                    </a>
+                  </div>
+                  <div class="media-card__body">
+                    <a
+                      class="media-card__title"
+                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
+                      >Top 50 - Vietnam</a
+                    >
+                    <a
+                      class="media-card__subtitle"
+                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
+                      >Your daily update of the most played tracks right now -
+                      Vietnam.</a
+                    >
+                  </div>
+                </li>
+              </ul>
+              <button class="carousel-nav" type="button" aria-label="Next">
+                <i
+                  class="ph-fill ph-caret-right text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </section>
+
+          <!-- ===== Footer ===== -->
+          <footer class="app-footer">
+            <nav class="app-footer__grid" aria-label="Footer">
+              <div>
+                <h4 class="app-footer__col-title">Company</h4>
+                <ul class="app-footer__col-list">
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/about-us/contact/"
+                      >About</a
+                    >
+                  </li>
+                  <li><a href="https://www.lifeatspotify.com/">Jobs</a></li>
+                  <li>
+                    <a href="https://newsroom.spotify.com/">For the Record</a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="app-footer__col-title">Communities</h4>
+                <ul class="app-footer__col-list">
+                  <li>
+                    <a href="https://artists.spotify.com/">For Artists</a>
+                  </li>
+                  <li>
+                    <a href="https://developer.spotify.com/">Developers</a>
+                  </li>
+                  <li><a href="https://ads.spotify.com/">Advertising</a></li>
+                  <li>
+                    <a href="https://investors.spotify.com/">Investors</a>
+                  </li>
+                  <li><a href="https://spotifyforvendors.com/">Vendors</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="app-footer__col-title">Useful links</h4>
+                <ul class="app-footer__col-list">
+                  <li><a href="https://support.spotify.com/">Support</a></li>
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/free/"
+                      >Free Mobile App</a
+                    >
+                  </li>
+                  <li><a href="/popular-in/vn">Popular by Country</a></li>
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/import-music/"
+                      >Import your music</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="app-footer__col-title">Spotify Plans</h4>
+                <ul class="app-footer__col-list">
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/premium/#plans"
+                      >Premium Individual</a
+                    >
+                  </li>
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/student/"
+                      >Premium Student</a
+                    >
+                  </li>
+                  <li>
+                    <a href="https://www.spotify.com/vn-vi/free/"
+                      >Spotify Free</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </nav>
+            <div class="app-footer__socials">
+              <a class="app-footer__social" href="#" aria-label="Instagram">
+                <i
+                  class="ph-fill ph-instagram-logo text-[24px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a class="app-footer__social" href="#" aria-label="X">
+                <i
+                  class="ph-fill ph-x-logo text-[24px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a class="app-footer__social" href="#" aria-label="Facebook">
+                <i
+                  class="ph-fill ph-facebook-logo text-[24px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+            <hr class="app-footer__divider" />
+            <p class="app-footer__copy">&copy; 2026 Spotify AB</p>
+          </footer>
+        </div>
+      </main>
+
+      <!-- ===== Now Playing Bar (full width) ===== -->
+      <aside class="now-playing-bar app-player" aria-label="Now playing bar">
+        <div class="now-playing-bar__left">
+          <div class="flex min-w-0 flex-col justify-center">
+            <p class="truncate text-[14px] font-normal text-white">
+              Preview of Spotify
+            </p>
+            <p class="truncate text-[11px] text-subdued">
+              Sign up to get unlimited songs and podcasts with occasional ads.
+              No credit card needed.
+            </p>
+          </div>
+          <a
+            href="#"
+            class="pill-button pill-button--white hidden shrink-0 px-4 py-2 text-sm sm:inline-flex"
+            >Sign up free</a
+          >
+        </div>
+
+        <div class="flex flex-col items-center gap-2">
+          <div class="flex items-center gap-4">
+            <button
+              class="player-control"
+              type="button"
+              aria-label="Enable shuffle"
+              disabled
+            >
+              <i
+                class="ph-fill ph-shuffle text-[16px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <button
+              class="player-control"
+              type="button"
+              aria-label="Previous"
+              disabled
+            >
+              <i
+                class="ph-fill ph-skip-back text-[16px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <button
+              class="player-control player-control--main"
+              type="button"
+              aria-label="Play"
+              disabled
+            >
+              <i
+                class="ph-fill ph-play text-[20px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <button
+              class="player-control"
+              type="button"
+              aria-label="Next"
+              disabled
+            >
+              <i
+                class="ph-fill ph-skip-forward text-[16px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <button
+              class="player-control"
+              type="button"
+              aria-label="Disable repeat"
+              disabled
+            >
+              <i
+                class="ph-fill ph-repeat text-[16px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </button>
+          </div>
+          <div class="flex w-full max-w-[280px] items-center gap-2">
+            <span class="text-[11px] text-subdued">-:--</span>
+            <input
+              class="slider w-full"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              disabled
+              role="slider"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-label="Change progress"
+            />
+            <span class="text-[11px] text-subdued">-:--</span>
+          </div>
+        </div>
+
+        <div class="now-playing-bar__right">
+          <button
+            class="player-control"
+            type="button"
+            aria-label="Mute"
+            disabled
+          >
+            <i
+              class="ph-fill ph-speaker-high text-[16px] leading-none"
+              aria-hidden="true"
+            ></i>
+          </button>
+          <input
+            class="slider hidden w-[90px] sm:block"
+            type="range"
+            min="0"
+            max="100"
+            value="100"
+            disabled
+            role="slider"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="100"
+            aria-label="Change volume"
+          />
+        </div>
+      </aside>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
