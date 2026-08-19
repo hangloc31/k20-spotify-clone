@@ -14,6 +14,8 @@
 
   .app-topbar {
     grid-area: topbar;
+    position: relative;
+    z-index: 1060;
   }
 
   .app-sidebar {
@@ -119,6 +121,104 @@
   .pill-button--sm {
     height: var(--spacing-control-sm);
     padding-inline: var(--spacing-4);
+  }
+
+  /* ---- Top bar: logged-in avatar & user menu ---- */
+  .top-bar__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-control-sm);
+    height: var(--spacing-control-sm);
+    border-radius: var(--corner-radius-rounded);
+    background-color: var(--color-tinted);
+    color: var(--color-white);
+    transition: background-color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .top-bar__avatar:hover {
+    background-color: var(--color-tinted-hover);
+  }
+
+  .top-bar__avatar:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+
+  .top-bar__avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--corner-radius-rounded);
+    object-fit: cover;
+  }
+
+  .top-bar__avatar-initial {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .user-menu {
+    position: absolute;
+    top: calc(100% + var(--spacing-2));
+    right: 0;
+    min-width: 220px;
+    padding: var(--spacing-1);
+    background-color: var(--color-elevated);
+    border-radius: var(--corner-radius-larger-2);
+    box-shadow: var(--shadow-overlay);
+    z-index: 1060;
+  }
+
+  .user-menu__header {
+    padding: var(--spacing-2);
+  }
+
+  .user-menu__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-white);
+  }
+
+  .user-menu__email {
+    font-size: 12px;
+    color: var(--color-subdued);
+    word-break: break-all;
+    margin-top: 2px;
+  }
+
+  .user-menu__divider {
+    height: 1px;
+    background-color: var(--color-tinted);
+    margin: var(--spacing-1) 0;
+  }
+
+  .user-menu__link,
+  .user-menu__logout {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    width: 100%;
+    padding: var(--spacing-2);
+    border-radius: var(--corner-radius-smaller);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .user-menu__link:hover,
+  .user-menu__logout:hover {
+    background-color: var(--color-tinted);
+  }
+
+  .user-menu__link:focus-visible,
+  .user-menu__logout:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: -2px;
   }
 
   /* ---- Card carousel (docs/layout.md §3) ---- */
@@ -254,6 +354,42 @@
     text-decoration: underline;
   }
 
+  /* ---- Loading skeleton (docs/components.md §5) ---- */
+  @keyframes skeleton-shimmer {
+    from {
+      background-position: 200% 0;
+    }
+
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-elevated) 0%,
+      var(--color-elevated-hover) 50%,
+      var(--color-elevated) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s linear infinite;
+  }
+
+  .skeleton--title {
+    height: 1rem;
+    width: 80%;
+    border-radius: var(--corner-radius-base);
+    margin-top: var(--spacing-3);
+  }
+
+  .skeleton--subtitle {
+    height: 0.875rem;
+    width: 55%;
+    border-radius: var(--corner-radius-base);
+    margin-top: var(--spacing-2);
+  }
+
   /* ---- Section group (docs/components.md §4) ---- */
   .section-group {
     padding: var(--spacing-1) 0 var(--spacing-looser-2);
@@ -342,25 +478,38 @@
 
   /* ---- Footer (docs/components.md §6) ---- */
   .app-footer {
-    padding: var(--spacing-looser-5) var(--spacing-looser-2)
-      var(--spacing-looser-3);
+    padding: var(--spacing-looser-4) 0 var(--spacing-looser-3);
   }
 
-  .app-footer__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--spacing-looser-3);
+  .app-footer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-looser-2);
+  }
+
+  .app-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .app-footer__col {
+    flex: 1;
+    min-width: 150px;
+    margin-right: var(--spacing-looser-2);
+    margin-bottom: var(--spacing-looser);
   }
 
   .app-footer__col-title {
     font-size: 1rem;
     font-weight: 700;
     color: var(--color-white);
-    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-2);
   }
 
   .app-footer__col-list li {
-    margin-bottom: var(--spacing-3);
+    padding-bottom: var(--spacing-2);
   }
 
   .app-footer__col-list a {
@@ -378,52 +527,79 @@
   .app-footer__socials {
     display: flex;
     gap: var(--spacing-4);
-    margin-top: var(--spacing-looser-3);
+    flex-shrink: 0;
+    margin-bottom: var(--spacing-looser-2);
   }
 
   .app-footer__social {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--spacing-control);
-    height: var(--spacing-control);
+    width: 40px;
+    height: 40px;
     border-radius: var(--corner-radius-rounded);
-    background-color: var(--color-elevated);
+    background-color: #292929;
     color: var(--color-white);
     transition:
-      background-color var(--duration-shortest-4) var(--ease-productive),
-      scale var(--duration-shortest-4) var(--ease-productive);
+      background-color var(--duration-shortest-2) var(--ease-productive),
+      scale var(--duration-shortest-2) var(--ease-productive);
   }
 
   .app-footer__social:hover {
-    background-color: var(--color-elevated-hover);
+    background-color: #727272;
     scale: 1.04;
   }
 
   .app-footer__divider {
     border: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: var(--spacing-looser-3) 0;
+    border-top: 1px solid #292929;
+    margin: 0 0 var(--spacing-looser);
   }
 
   .app-footer__copy {
     font-size: 0.875rem;
     color: var(--color-subdued);
+    text-align: right;
   }
 
   /* ---- Now playing bar (docs/components.md §7) ---- */
   .now-playing-bar {
-    display: grid;
+    display: flex;
+    align-items: stretch;
+    padding: var(--spacing-2);
+    background-color: var(--color-press);
+  }
+
+  /* Sign-up state (logged out) — gradient promo bar, full width */
+  .now-playing-bar__signup {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 11px 24px 7px 15px;
+    background-image: var(--gradient-signup);
+    overflow: hidden;
+  }
+
+  /* Player state (logged in) — 3-column grid, hidden until login */
+  .now-playing-bar__player {
+    display: none;
     grid-template-columns: 1fr minmax(200px, 2fr) 1fr;
     align-items: center;
     gap: var(--spacing-4);
-    padding: var(--spacing-2) var(--spacing-4);
-    background-color: var(--color-base);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+  }
+
+  .now-playing-bar__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
   }
 
   .now-playing-bar__left {
     display: flex;
+    flex: 1;
+    justify-content: space-between;
     align-items: center;
     gap: var(--spacing-4);
     min-width: 0;
@@ -434,6 +610,15 @@
     align-items: center;
     justify-content: flex-end;
     gap: var(--spacing-4);
+  }
+
+  /* Login toggle: when body.is-logged-in, swap which section shows */
+  body.is-logged-in .now-playing-bar__signup {
+    display: none;
+  }
+
+  body.is-logged-in .now-playing-bar__player {
+    display: grid;
   }
 
   .player-control {
@@ -486,6 +671,45 @@
     cursor: default;
   }
 
+  /* ---- Toast (shared: login + signup) ---- */
+  .toast {
+    position: fixed;
+    top: 32px;
+    left: 50%;
+    z-index: 1080;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 400px;
+    min-width: 280px;
+    padding: 14px 20px;
+    background-color: var(--color-elevated);
+    color: var(--color-white);
+    border-radius: var(--corner-radius-larger-2);
+    box-shadow: var(--shadow-overlay);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transform: translate(-50%, -12px);
+    pointer-events: none;
+    transition:
+      opacity var(--duration-short-1) var(--ease-enter),
+      transform var(--duration-short-1) var(--ease-enter);
+  }
+
+  .toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+  }
+
+  .toast__icon {
+    font-size: 20px;
+    color: var(--color-positive);
+    flex-shrink: 0;
+  }
+
   /* ---- Focus-visible (docs/design-system.md §1) ---- */
   :focus-visible {
     outline: 2px solid var(--color-white);
@@ -521,7 +745,7 @@
 }
 
 @media (max-width: 639px) {
-  .now-playing-bar {
+  .now-playing-bar__player {
     grid-template-columns: 1fr auto;
   }
 

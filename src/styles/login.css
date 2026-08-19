@@ -1,0 +1,192 @@
+/* Login page (login.html) — standalone auth screen.
+   Visual spec captured from https://accounts.spotify.com/vi/login (see docs/design-system.md tokens). */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-base);
+  color: var(--color-white);
+}
+
+.login-page__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 96px;
+  padding-inline: 32px;
+  padding-bottom: 32px;
+}
+
+.login-page__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 32px 12px;
+}
+
+.login-page__card {
+  width: 324px;
+  max-width: 100%;
+}
+
+.login-page__title {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: normal;
+  text-align: center;
+  padding-bottom: 32px;
+}
+
+.login-form__field {
+  padding-block-end: 16px;
+}
+
+.login-form__field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  padding-block-end: 8px;
+}
+
+.login-form__input {
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  font-size: 16px;
+  color: var(--color-white);
+  background-color: var(--color-base);
+  border: 0;
+  border-radius: var(--corner-radius-base);
+  box-shadow: 0 0 0 1px var(--color-muted) inset;
+  transition:
+    box-shadow var(--duration-shortest-3) var(--ease-productive),
+    outline-color var(--duration-shortest-3) var(--ease-productive);
+}
+
+.login-form__input::placeholder {
+  color: var(--color-muted);
+}
+
+.login-form__input:hover {
+  box-shadow: 0 0 0 1px var(--color-white) inset;
+}
+
+.login-form__input:focus {
+  outline: 2px solid var(--color-white);
+  outline-offset: 0;
+  box-shadow: 0 0 0 1px var(--color-white) inset;
+}
+
+.login-form__submit {
+  width: 100%;
+  height: 48px;
+  padding: 8px 32px;
+  border-radius: var(--corner-radius-rounded);
+  background-color: var(--color-positive);
+  color: var(--color-press);
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform var(--duration-shortest-3) var(--ease-productive);
+}
+
+.login-form__submit:hover {
+  transform: scale(var(--button-hover-scale));
+}
+
+.login-form__submit:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.login-page__signup {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.login-page__signup p {
+  font-size: 16px;
+  color: var(--color-subdued);
+}
+
+.login-page__signup-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  height: 48px;
+  padding: 8px 32px;
+  border-radius: var(--corner-radius-rounded);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-white);
+  transition:
+    transform var(--duration-shortest-3) var(--ease-productive),
+    background-color var(--duration-shortest-3) var(--ease-productive);
+}
+
+.login-page__signup-link:hover {
+  transform: scale(var(--button-hover-scale));
+  background-color: var(--color-tinted);
+}
+
+.login-page__signup-link:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.login-page__notice {
+  margin-top: 32px;
+  max-width: 324px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-subdued);
+}
+
+.login-page__notice a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login-page__notice a:hover {
+  color: var(--color-white);
+}
+
+.login-page__notice a:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+.login-form__field.is-error label {
+  color: var(--color-negative);
+}
+.login-form__field.is-error .login-form__input {
+  box-shadow: 0 0 0 1px var(--color-negative) inset;
+}
+.login-form__field .error-msg {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--color-negative);
+}
+
+/* Form-level error banner */
+.login-form__error {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--corner-radius-base);
+  background-color: rgba(230, 57, 70, 0.15);
+  color: var(--color-negative);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Disabled submit */
+.login-form__submit:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}

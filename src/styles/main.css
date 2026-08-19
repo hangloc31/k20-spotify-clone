@@ -1,8 +1,12 @@
-@import 'tailwindcss';
-@import '@phosphor-icons/web/fill';
-@import './components.css';
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+@import "@phosphor-icons/web/fill";
+@import "./components.css";
 
 @source "../../index.html";
+@source "../../login.html";
+@source "../../signup.html";
+@source "../../profile.html";
 
 @theme {
   /* ---- Backgrounds (docs/design-system.md §1) ---- */
@@ -26,6 +30,13 @@
   --color-warning: #ffa42b;
   --color-negative: #f3727f;
 
+  /* ---- Gradients ---- */
+  --gradient-signup: linear-gradient(
+    90deg,
+    rgb(175, 40, 150),
+    rgb(80, 155, 245)
+  );
+
   /* ---- Accents ---- */
   --color-accent: #1ed760;
   --color-essential-announcement: #1278f2;
@@ -33,15 +44,17 @@
   --color-essential-warning: #ffa42b;
 
   /* ---- Typography (docs/design-system.md §2) ---- */
-  --font-body: SpotifyMixUI, 'CircularSp-Arab', 'CircularSp-Hebr',
-    'CircularSp-Cyrl', 'CircularSp-Grek', 'CircularSp-Deva', 'Helvetica Neue',
-    helvetica, arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo,
-    'MS Gothic';
-  --font-title: SpotifyMixUITitle, 'CircularSp-Arab', 'CircularSp-Hebr',
-    'CircularSp-Cyrl', 'CircularSp-Grek', 'CircularSp-Deva', 'Helvetica Neue',
-    helvetica, arial, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo,
-    'MS Gothic';
-  --font-mono: SpotifyMixMono, ui-monospace, monospace;
+  --font-body:
+    "Inter", SpotifyMixUI, "CircularSp-Arab", "CircularSp-Hebr",
+    "CircularSp-Cyrl", "CircularSp-Grek", "CircularSp-Deva", "Helvetica Neue",
+    helvetica, arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo,
+    "MS Gothic";
+  --font-title:
+    "Inter", SpotifyMixUITitle, "CircularSp-Arab", "CircularSp-Hebr",
+    "CircularSp-Cyrl", "CircularSp-Grek", "CircularSp-Deva", "Helvetica Neue",
+    helvetica, arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo,
+    "MS Gothic";
+  --font-mono: "Inter", SpotifyMixMono, ui-monospace, monospace;
 
   /* ---- Motion (docs/design-system.md §5) ---- */
   --ease-productive: cubic-bezier(0.3, 0, 0, 1);
@@ -53,6 +66,7 @@
   --duration-shortest-4: 200ms;
   --duration-short-1: 250ms;
   --duration-short-2: 300ms;
+  --button-hover-scale: 1.04;
 
   /* ---- Spacing scale (docs/design-system.md §3) ---- */
   --spacing-1: 4px;
@@ -81,10 +95,10 @@
 
   /* ---- Layout constants (docs/design-system.md §6) ---- */
   --spacing-topbar: 64px;
-  --spacing-playerbar: 66px;
-  --spacing-sidebar: 232px;
-  --spacing-sidebar-min: 200px;
-  --spacing-sidebar-max: 280px;
+  --spacing-playerbar: 82px;
+  --spacing-sidebar: 420px;
+  --spacing-sidebar-min: 300px;
+  --spacing-sidebar-max: 480px;
   --spacing-card: 178px;
   --spacing-volume: 90px;
   --spacing-contentmax: 1955px;

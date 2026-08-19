@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Spotify login page clone - email and password sign in, built with Vite and Tailwind CSS for educational purposes."
+    />
+    <title>Spotify - Login</title>
+    <link rel="stylesheet" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/src/styles/login.css" />
+  </head>
+  <body class="login-page">
+    <main class="login-page__main">
+      <header class="login-page__header">
+        <a href="/" aria-label="Spotify">
+          <i
+            class="ph-fill ph-spotify-logo text-[48px] leading-none text-white"
+            aria-hidden="true"
+          ></i>
+        </a>
+      </header>
+
+      <section class="login-page__card" aria-labelledby="login-title">
+        <h1 id="login-title" class="login-page__title">
+          Chào mừng bạn quay trở lại
+        </h1>
+
+        <p class="login-form__error" role="alert" hidden></p>
+
+        <form class="login-form" action="#" method="post" novalidate>
+          <div class="login-form__field">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              class="login-form__input"
+              placeholder="email"
+              required
+            />
+            <p class="error-msg"></p>
+          </div>
+
+          <div class="login-form__field">
+            <label for="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              autocomplete="current-password"
+              class="login-form__input"
+              minlength="6"
+              placeholder="password"
+              required
+            />
+            <p class="error-msg"></p>
+          </div>
+
+          <button type="submit" class="login-form__submit">Đăng nhập</button>
+        </form>
+
+        <div class="login-page__signup">
+          <p>Bạn chưa có tài khoản?</p>
+          <a href="signup.html" class="login-page__signup-link">Đăng ký</a>
+        </div>
+      </section>
+
+      <p class="login-page__notice">
+        Trang web này được bảo vệ bằng reCAPTCHA và tuân theo
+        <a href="#">Chính sách quyền riêng tư</a> cũng như
+        <a href="#">Điều khoản dịch vụ</a> của Google.
+      </p>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+      <i
+        class="toast__icon ph-fill ph-check-circle"
+        aria-hidden="true"
+      ></i>
+      <span class="toast__message"></span>
+    </div>
+
+    <script type="module" src="/src/js/login.js"></script>
+  </body>
+</html>
