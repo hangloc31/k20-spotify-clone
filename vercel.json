@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/playlist/:id", "destination": "/index.html" },
+    { "source": "/artist/:id", "destination": "/index.html" },
+    { "source": "/album/:id", "destination": "/index.html" },
+    { "source": "/track/:id", "destination": "/index.html" },
+    { "source": "/section/:id", "destination": "/index.html" }
+  ]
+}

@@ -1,4 +1,4 @@
-export const baseUrl = import.meta.env.VITE_API_BASE_URL;
+export const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://spotify.f8team.dev";
 
 export class HttpError extends Error {
   constructor(status, message, code, details) {
