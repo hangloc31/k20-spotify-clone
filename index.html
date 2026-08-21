@@ -15,65 +15,73 @@
     <div class="app-shell">
       <!-- ===== Top Bar (full width) ===== -->
       <header class="top-bar app-topbar">
-        <nav class="top-bar__left flex items-center gap-2" aria-label="Main">
-          <a
-            href="/"
-            class="top-bar__logo flex h-8 shrink-0 items-center px-1"
-            aria-label="Spotify"
-          >
+        <div class="top-bar__left">
+          <a href="/" class="top-bar__logo" aria-label="Spotify">
             <i
               class="ph-fill ph-spotify-logo text-[32px] leading-none text-white"
               aria-hidden="true"
             ></i>
           </a>
-          <a href="/" class="nav-item is-active" aria-current="page">
+        </div>
+        <div class="top-bar__center">
+          <a
+            href="/"
+            class="top-bar__home is-active"
+            aria-label="Home"
+            aria-current="page"
+            data-home-link
+          >
             <i
               class="ph-fill ph-house text-[24px] leading-none"
               aria-hidden="true"
             ></i>
-            <span>Home</span>
           </a>
-          <a href="#" class="nav-item" aria-label="Search">
-            <i
-              class="ph-fill ph-magnifying-glass text-[24px] leading-none"
-              aria-hidden="true"
-            ></i>
-            <span>Search</span>
-          </a>
-          <a href="#" class="nav-item hidden md:flex" aria-label="Browse">
-            <i
-              class="ph-fill ph-squares-four text-[24px] leading-none"
-              aria-hidden="true"
-            ></i>
-            <span>Browse</span>
-          </a>
-        </nav>
-        <div class="top-bar__actions flex items-center gap-2">
-          <a href="#" class="pill-button pill-button--ghost px-3 py-2 text-sm"
-            >Premium</a
-          >
-          <a
-            href="#"
-            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm md:inline-flex"
-            >Support</a
-          >
-          <a
-            href="#"
-            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm lg:inline-flex"
-          >
-            <i
-              class="ph-fill ph-download text-[16px] leading-none"
-              aria-hidden="true"
-            ></i>
-            <span>Download</span>
-          </a>
-          <a
-            href="#"
-            class="pill-button pill-button--ghost hidden px-3 py-2 text-sm lg:inline-flex"
-            >Install App</a
-          >
+          <form class="top-bar__search" role="search" aria-label="Search">
+            <button
+              type="submit"
+              class="top-bar__search-icon"
+              aria-label="Search"
+            >
+              <i
+                class="ph-fill ph-magnifying-glass text-[20px] leading-none text-subdued shrink-0"
+                aria-hidden="true"
+              ></i>
+            </button>
+            <input
+              class="top-bar__search-input"
+              type="search"
+              placeholder="What do you want to play?"
+              aria-label="What do you want to play?"
+              autocomplete="off"
+            />
+            <span class="top-bar__search-divider" aria-hidden="true"></span>
+            <a href="#" class="top-bar__search-browse" aria-label="Browse">
+              <i
+                class="ph-fill ph-squares-four text-[20px] leading-none"
+                aria-hidden="true"
+              ></i>
+            </a>
+          </form>
+          <div
+            id="search-suggestions"
+            class="search-dropdown"
+            hidden
+            role="listbox"
+            aria-label="Trending searches"
+          ></div>
+          <div
+            id="search-results"
+            class="search-dropdown"
+            hidden
+            role="listbox"
+            aria-label="Search results"
+          ></div>
+        </div>
+        <div class="top-bar__right">
           <div class="flex items-center gap-1" data-auth-guest>
-            <a href="signup.html" class="pill-button pill-button--ghost px-3 py-2 text-sm"
+            <a
+              href="signup.html"
+              class="pill-button pill-button--ghost hidden px-3 py-2 text-sm sm:inline-flex"
               >Sign up</a
             >
             <a
@@ -929,6 +937,11 @@
             <p class="app-footer__copy">&copy; 2026 Spotify AB</p>
           </footer>
         </div>
+        <div
+          id="detail-view"
+          class="detail-view mx-auto hidden w-full max-w-contentmax px-8 pt-4"
+          hidden
+        ></div>
       </main>
 
       <!-- ===== Now Playing Bar (full width) ===== -->

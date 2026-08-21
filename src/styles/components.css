@@ -42,41 +42,348 @@
     grid-area: player;
   }
 
-  /* ---- Top bar ---- */
+  /* ---- Top bar (Spotify real: logo | Home + search | auth) ---- */
   .top-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
     gap: var(--spacing-4);
-    padding: var(--spacing-4) var(--spacing-8);
-    background-color: rgba(18, 18, 18, 0.6);
-    backdrop-filter: blur(24px);
+    height: var(--spacing-topbar);
+    padding: var(--spacing-2) var(--spacing-4);
+    background-color: var(--color-press);
   }
 
-  /* ---- Nav items (TopBar) ---- */
-  .nav-item {
+  .top-bar__left {
     display: flex;
     align-items: center;
-    gap: var(--spacing-4);
+    flex-shrink: 0;
+  }
+
+  .top-bar__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-control);
+    height: var(--spacing-control);
+    flex-shrink: 0;
+  }
+
+  .top-bar__center {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+    max-width: 546px;
+    width: 100%;
+    justify-self: center;
+  }
+
+  .top-bar__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-2);
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .top-bar__home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-control);
+    height: var(--spacing-control);
+    border-radius: var(--corner-radius-rounded);
+    background-color: var(--color-elevated);
+    color: var(--color-white);
+    flex-shrink: 0;
+    transition: background-color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .top-bar__home:hover {
+    background-color: var(--color-elevated-hover);
+  }
+
+  .top-bar__home.is-active {
+    background-color: var(--color-elevated-hover);
+  }
+
+  .top-bar__home:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+
+  .top-bar__search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 474px;
+    height: var(--spacing-control);
+    padding: 0 var(--spacing-3);
+    border-radius: var(--corner-radius-rounded);
+    background-color: var(--color-elevated-hover);
+    color: var(--color-subdued);
+    cursor: text;
+    transition:
+      background-color var(--duration-shortest-4) var(--ease-productive),
+      box-shadow var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .top-bar__search:hover {
+    background-color: #333;
+  }
+
+  .top-bar__search:focus-within {
+    background-color: var(--color-elevated-hover);
+    box-shadow: 0 0 0 2px var(--color-white) inset;
+  }
+
+  .top-bar__search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .top-bar__search-input:focus,
+  .top-bar__search-input:focus-visible {
+    outline: none;
+    outline-offset: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .top-bar__search-input::placeholder {
+    color: var(--color-subdued);
+  }
+
+  .top-bar__search-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #3e3e3e;
+    flex-shrink: 0;
+  }
+
+  .top-bar__search-browse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-control-sm);
     height: var(--spacing-control-sm);
-    padding-inline: var(--spacing-3);
     border-radius: var(--corner-radius-rounded);
     color: var(--color-subdued);
+    flex-shrink: 0;
+    transition: color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .top-bar__search-browse:hover {
+    color: var(--color-white);
+  }
+
+  .top-bar__search-browse:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+
+  .top-bar__search-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-control-sm);
+    height: var(--spacing-control-sm);
+    border-radius: var(--corner-radius-rounded);
+    color: var(--color-subdued);
+    flex-shrink: 0;
+    transition: color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .top-bar__search-icon:hover {
+    color: var(--color-white);
+  }
+
+  .top-bar__search-icon:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+  }
+
+  /* Search dropdowns */
+  .search-dropdown {
+    position: absolute;
+    top: calc(100% + var(--spacing-2));
+    left: 48px;
+    right: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: var(--color-elevated);
+    border-radius: var(--corner-radius-larger-2);
+    box-shadow: var(--shadow-overlay);
+    padding: var(--spacing-1);
+    z-index: 1060;
+  }
+
+  .search-dropdown[hidden] {
+    display: none;
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-2);
+    border-radius: var(--corner-radius-larger);
+    color: var(--color-white);
+    text-align: left;
+    transition: background-color var(--duration-shortest-4) var(--ease-productive);
+  }
+
+  .search-row:hover {
+    background-color: var(--color-tinted);
+  }
+
+  .search-row:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: -2px;
+  }
+
+  .search-row__img-wrap {
+    flex-shrink: 0;
+  }
+
+  .search-row__img {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--corner-radius-base);
+    object-fit: cover;
+  }
+
+  .search-row__img--round {
+    border-radius: var(--corner-radius-rounded);
+  }
+
+  .search-row__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-row__title {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .search-row__subtitle {
+    font-size: 12px;
+    color: var(--color-subdued);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .search-row__badge {
+    font-size: 11px;
     font-weight: 700;
-    font-size: 1rem;
-    transition:
-      color var(--duration-shortest-4) var(--ease-productive),
-      background-color var(--duration-shortest-4) var(--ease-productive);
+    text-transform: uppercase;
+    color: var(--color-subdued);
+    flex-shrink: 0;
   }
 
-  .nav-item:hover {
-    color: var(--color-white);
-    background-color: var(--color-tinted);
+  .search-dropdown__empty {
+    padding: var(--spacing-4);
+    font-size: 14px;
+    color: var(--color-subdued);
+    text-align: center;
   }
 
-  .nav-item.is-active {
-    color: var(--color-white);
-    background-color: var(--color-tinted);
+  /* Detail view */
+  .detail-view {
+    min-height: 400px;
+  }
+
+  .detail-header {
+    background-color: var(--color-elevated);
+  }
+
+  .detail-cover {
+    box-shadow: var(--shadow-overlay);
+  }
+
+  .detail-title {
+    line-height: 1.1;
+  }
+
+  /* Search collapsed on mobile (<640px): icon-only, expand on focus */
+  @media (max-width: 639px) {
+    .top-bar__center {
+      gap: var(--spacing-2);
+    }
+
+    .top-bar__search {
+      max-width: none;
+      width: var(--spacing-control);
+      flex: 0 0 var(--spacing-control);
+      justify-content: center;
+      padding: 0;
+    }
+
+    .top-bar__search-input {
+      width: 0;
+      flex: 0 0 0;
+      opacity: 0;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .top-bar__search-divider,
+    .top-bar__search-browse {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .top-bar__search:focus-within {
+      flex: 1 1 auto;
+      width: auto;
+      justify-content: flex-start;
+      padding: 0 var(--spacing-3);
+    }
+
+    .top-bar__search:focus-within .top-bar__search-input {
+      width: auto;
+      flex: 1 1 auto;
+      opacity: 1;
+    }
+
+    .top-bar__search:focus-within .top-bar__search-divider {
+      width: 1px;
+      opacity: 1;
+    }
+
+    .top-bar__search:focus-within .top-bar__search-browse {
+      width: var(--spacing-control-sm);
+      opacity: 1;
+    }
+
+    .top-bar__center:focus-within .top-bar__home {
+      display: none;
+    }
+
+    .search-dropdown {
+      left: 0;
+    }
   }
 
   /* ---- Pill button ---- */

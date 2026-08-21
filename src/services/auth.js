@@ -91,7 +91,7 @@ export async function refreshToken() {
   return data.access_token;
 }
 
-export function logout(message) {
+export function logout() {
   const accessToken = getAccessToken();
 
   if (accessToken) {
@@ -102,7 +102,5 @@ export function logout(message) {
   }
 
   clearSession();
-  location.href = message
-    ? `/login.html?message=${encodeURIComponent(message)}`
-    : "/login.html";
+  location.href = "/";
 }
