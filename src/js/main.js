@@ -8,6 +8,7 @@ import {
 import { initCarousels } from "./carouselBtn.js";
 import { ensureSession, initAuthUI } from "./authUI.js";
 import { initSearch } from "./search.js";
+import { initLibrary } from "./library.js";
 
 async function renderTrendingSongs() {
   const grid = document
@@ -108,6 +109,7 @@ async function renderAllPlaylists() {
 await ensureSession();
 initAuthUI();
 initSearch();
+initLibrary();
 
 await renderTrendingSongs();
 await renderPopularArtist();

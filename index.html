@@ -148,15 +148,104 @@
               ></i>
               <span class="text-[16px] font-bold">Your Library</span>
             </button>
-            <button
-              class="flex h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
-              aria-label="Create playlist"
-            >
-              <i
-                class="ph-fill ph-plus text-[16px] leading-none"
-                aria-hidden="true"
-              ></i>
-            </button>
+            <div class="flex items-center gap-1">
+              <div class="library-view-anchor" data-library-view-anchor>
+              <button
+                class="library-view-toggle h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
+                aria-label="Change view"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                data-library-view-toggle
+                hidden
+              >
+                <i
+                  class="ph-fill ph-squares-four text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+              <div
+                class="library-view-menu"
+                role="menu"
+                aria-label="Change view"
+                data-library-view-menu
+                hidden
+              >
+                <button
+                  class="library-view-menu__item"
+                  role="menuitemradio"
+                  aria-checked="false"
+                  data-view-option="compact-list"
+                >
+                  <i
+                    class="ph-fill ph-rows text-[16px] leading-none"
+                    aria-hidden="true"
+                  ></i>
+                  <span>Compact list</span>
+                  <i
+                    class="ph-fill ph-check library-view-menu__check"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <button
+                  class="library-view-menu__item"
+                  role="menuitemradio"
+                  aria-checked="false"
+                  data-view-option="default-list"
+                >
+                  <i
+                    class="ph-fill ph-list-dashes text-[16px] leading-none"
+                    aria-hidden="true"
+                  ></i>
+                  <span>Default list</span>
+                  <i
+                    class="ph-fill ph-check library-view-menu__check"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <button
+                  class="library-view-menu__item"
+                  role="menuitemradio"
+                  aria-checked="false"
+                  data-view-option="compact-grid"
+                >
+                  <i
+                    class="ph-fill ph-grid-nine text-[16px] leading-none"
+                    aria-hidden="true"
+                  ></i>
+                  <span>Compact grid</span>
+                  <i
+                    class="ph-fill ph-check library-view-menu__check"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <button
+                  class="library-view-menu__item"
+                  role="menuitemradio"
+                  aria-checked="false"
+                  data-view-option="default-grid"
+                >
+                  <i
+                    class="ph-fill ph-squares-four text-[16px] leading-none"
+                    aria-hidden="true"
+                  ></i>
+                  <span>Default grid</span>
+                  <i
+                    class="ph-fill ph-check library-view-menu__check"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+              </div>
+              <button
+                class="flex h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
+                aria-label="Create playlist"
+              >
+                <i
+                  class="ph-fill ph-plus text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
           </div>
 
           <div class="library__content mt-2 flex flex-col gap-2 px-2">
@@ -187,6 +276,36 @@
               >
             </div>
           </div>
+
+          <ul
+            class="library__list"
+            data-library-list
+            hidden
+            aria-label="Your library items"
+            aria-busy="true"
+          >
+            <li class="library-item" aria-hidden="true">
+              <div class="skeleton library-item__cover"></div>
+              <div class="library-item__body">
+                <div class="skeleton skeleton--title"></div>
+                <div class="skeleton skeleton--subtitle"></div>
+              </div>
+            </li>
+            <li class="library-item" aria-hidden="true">
+              <div class="skeleton library-item__cover"></div>
+              <div class="library-item__body">
+                <div class="skeleton skeleton--title"></div>
+                <div class="skeleton skeleton--subtitle"></div>
+              </div>
+            </li>
+            <li class="library-item" aria-hidden="true">
+              <div class="skeleton library-item__cover"></div>
+              <div class="library-item__body">
+                <div class="skeleton skeleton--title"></div>
+                <div class="skeleton skeleton--subtitle"></div>
+              </div>
+            </li>
+          </ul>
 
           <ul
             class="library__links flex flex-wrap gap-x-3 gap-y-2 px-2 py-4 text-[11px] font-normal text-subdued"
