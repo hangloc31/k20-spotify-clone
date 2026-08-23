@@ -192,12 +192,31 @@ export function initLibrary() {
   if (!list || !toggleBtn || !menu) return;
 
   const ctaCards = document.querySelector(".library__content");
+  const searchBox = document.querySelector("[data-library-search]");
+  const searchInput = document.querySelector("[data-library-search-input]");
+  const chipsBox = document.querySelector("[data-library-chips]");
   ctaCards?.setAttribute("hidden", "");
   toggleBtn.removeAttribute("hidden");
   list.removeAttribute("hidden");
+  searchBox?.removeAttribute("hidden");
+  chipsBox?.removeAttribute("hidden");
 
   let view = getSavedView();
   let items = [];
+  let filterType = "all";
+  let searchTerm = "";
+
+  function getFilteredItems() {
+    const q = searchTerm.trim().toLowerCase();
+    return items.filter((it) => {
+      const matchType = filterType === "all" || it.kind === filterType;
+      const matchQuery =
+        !q ||
+        it.title.toLowerCase().includes(q) ||
+        it.owner.toLowerCase().includes(q);
+      return matchType && matchQuery;
+    });
+  }
 
   function applyView() {
     list.dataset.view = view;
@@ -207,9 +226,19 @@ export function initLibrary() {
       option.setAttribute("aria-checked", String(isActive));
     });
 
-    if (!items.length) return;
+    const visible = getFilteredItems();
     list.innerHTML = "";
-    items.forEach((item) => list.appendChild(createLibraryItem(item, view)));
+    if (!items.length) return;
+
+    if (!visible.length) {
+      const empty = document.createElement("li");
+      empty.className = "library-item library-item--empty";
+      empty.textContent = `No results found for "${searchTerm.trim()}"`;
+      list.appendChild(empty);
+      return;
+    }
+
+    visible.forEach((item) => list.appendChild(createLibraryItem(item, view)));
   }
 
   function closeMenu() {
@@ -234,6 +263,32 @@ export function initLibrary() {
       applyView();
       closeMenu();
     });
+  });
+
+  chipsBox?.querySelectorAll("[data-chip]").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      filterType = chip.dataset.chip;
+      chipsBox.querySelectorAll("[data-chip]").forEach((c) => {
+        const isActive = c.dataset.chip === filterType;
+        c.classList.toggle("is-active", isActive);
+        c.setAttribute("aria-pressed", String(isActive));
+      });
+      applyView();
+    });
+  });
+
+  searchInput?.addEventListener("input", (e) => {
+    searchTerm = e.target.value;
+    applyView();
+  });
+
+  searchInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchInput.value = "";
+      searchTerm = "";
+      applyView();
+      searchInput.blur();
+    }
   });
 
   document.addEventListener("click", (e) => {

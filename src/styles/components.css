@@ -1017,6 +1017,80 @@
     flex-shrink: 0;
   }
 
+  /* ---- Library search + filter chips (docs/components.md §2) ---- */
+  .library-search {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin: var(--spacing-2) var(--spacing-2) var(--spacing-1);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--corner-radius-larger-2);
+    background-color: var(--color-tinted);
+    color: var(--color-subdued);
+    transition: background-color var(--duration-shortest-2) var(--ease-productive);
+  }
+
+  .library-search:focus-within {
+    background-color: var(--color-tinted-hover);
+    color: var(--color-white);
+    box-shadow: 0 0 0 2px var(--color-white) inset;
+  }
+
+  .library-search__input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-size: 14px;
+    color: var(--color-white);
+  }
+
+  .library-search__input::placeholder {
+    color: var(--color-subdued);
+  }
+
+  .library-search__input:focus {
+    outline: none;
+    outline-offset: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .library-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    padding: var(--spacing-1) var(--spacing-2) var(--spacing-2);
+  }
+
+  .library-chip {
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--corner-radius-rounded);
+    font-size: 13px;
+    font-weight: 400;
+    background-color: var(--color-tinted);
+    color: var(--color-white);
+    transition:
+      background-color var(--duration-shortest-2) var(--ease-productive),
+      color var(--duration-shortest-2) var(--ease-productive);
+  }
+
+  .library-chip:hover {
+    background-color: var(--color-tinted-hover);
+  }
+
+  .library-chip.is-active {
+    background-color: var(--color-white);
+    color: var(--color-press);
+  }
+
+  .library-item--empty {
+    padding: var(--spacing-3);
+    font-size: 14px;
+    color: var(--color-subdued);
+  }
+
   /* ---- Library view menu (docs/components.md §2) ---- */
   .library-view-anchor {
     position: relative;
@@ -1297,6 +1371,8 @@
   .library__content,
   .library__links,
   .library__list,
+  .library-search,
+  .library-chips,
   .library-view-menu,
   .library-view-toggle {
     display: none;

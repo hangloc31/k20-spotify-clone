@@ -248,6 +248,60 @@
             </div>
           </div>
 
+          <div
+            class="library-search"
+            data-library-search
+            hidden
+          >
+            <i
+              class="ph-fill ph-magnifying-glass text-[16px] leading-none"
+              aria-hidden="true"
+            ></i>
+            <input
+              type="search"
+              class="library-search__input"
+              placeholder="Search in your library"
+              aria-label="Search in your library"
+              autocomplete="off"
+              data-library-search-input
+            />
+          </div>
+
+          <div class="library-chips" data-library-chips hidden>
+            <button
+              class="library-chip is-active"
+              type="button"
+              data-chip="all"
+              aria-pressed="true"
+            >
+              All
+            </button>
+            <button
+              class="library-chip"
+              type="button"
+              data-chip="playlist"
+              aria-pressed="false"
+            >
+              Playlists
+            </button>
+            <button
+              class="library-chip"
+              type="button"
+              data-chip="artist"
+              aria-pressed="false"
+            >
+              Artists
+            </button>
+            <button
+              class="library-chip"
+              type="button"
+              data-chip="album"
+              aria-pressed="false"
+            >
+              Albums
+            </button>
+          </div>
+
           <div class="library__content mt-2 flex flex-col gap-2 px-2">
             <div class="rounded-lg bg-elevated p-4">
               <p class="text-[16px] font-bold text-white">
