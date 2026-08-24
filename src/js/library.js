@@ -2,7 +2,12 @@ import { isLoggedIn } from "../services/auth.js";
 import { httpRequest } from "../services/http.js";
 
 const VIEW_KEY = "spotify-library-view";
-const VALID_VIEWS = ["compact-list", "default-list", "compact-grid", "default-grid"];
+const VALID_VIEWS = [
+  "compact-list",
+  "default-list",
+  "compact-grid",
+  "default-grid",
+];
 const DEFAULT_VIEW = "default-list";
 
 function isValidCoverUrl(src) {
@@ -63,9 +68,7 @@ function createOverlay(item) {
 
   const meta = document.createElement("p");
   meta.className = "library-item__overlay-meta";
-  meta.textContent = item.owner
-    ? `${item.type} • ${item.owner}`
-    : item.type;
+  meta.textContent = item.owner ? `${item.type} • ${item.owner}` : item.type;
   overlay.appendChild(meta);
 
   return overlay;
@@ -104,11 +107,26 @@ function createLibraryItem(item, view) {
   link.className = "library-item__link";
   link.href = "#";
   link.setAttribute("aria-label", `${item.title} - ${item.type}`);
+  if (item.likedSongs) {
+    link.dataset.detail = "";
+    link.dataset.type = "liked";
+    link.dataset.title = item.title;
+    link.href = "/liked";
+  } else if (item.id && item.type) {
+    const type = item.type.toLowerCase();
+    link.dataset.detail = "";
+    link.dataset.type = type;
+    link.dataset.id = item.id;
+    link.dataset.title = item.title;
+    link.href = `/${type}/${item.id}`;
+  }
   li.appendChild(link);
 
   const showCover = view !== "compact-list";
   if (showCover) {
-    li.appendChild(createCover(item.image, `Cover of ${item.title}`, item.round));
+    li.appendChild(
+      createCover(item.image, `Cover of ${item.title}`, item.round),
+    );
   }
 
   if (view === "default-list" || view === "default-grid") {
@@ -136,40 +154,44 @@ function createLibraryItem(item, view) {
 }
 
 async function fetchLibraryItems() {
-  const [playlists, artists, albums] = await Promise.all([
-    httpRequest.get("/api/playlists?limit=5&offset=0"),
-    httpRequest.get("/api/artists?limit=3"),
-    httpRequest.get("/api/albums/popular?limit=3"),
+  const [own, followed, albums, artists, liked] = await Promise.all([
+    httpRequest.get("/api/me/playlists?limit=10", { auth: true }),
+    httpRequest.get("/api/me/playlists/followed?limit=10&offset=0", { auth: true }),
+    httpRequest.get("/api/me/albums/liked?limit=10&offset=0", { auth: true }),
+    httpRequest.get("/api/me/following?limit=10&offset=0", { auth: true }),
+    httpRequest.get("/api/me/tracks/liked?limit=50", { auth: true }),
   ]);
 
   const items = [];
+  const seen = new Set();
+  const likedCount = (liked?.tracks ?? []).length;
 
-  (playlists?.playlists ?? []).forEach((pl) => {
-    items.push({
-      kind: "playlist",
-      title: pl.name,
-      type: "Playlist",
-      owner: pl.user_username || pl.owner_name || "",
-      ownerEligible: true,
-      image: pl.image_url,
-      round: false,
+  (own?.playlists ?? [])
+    .concat(followed?.playlists ?? [])
+    .forEach((pl) => {
+      if (!pl?.id || seen.has(pl.id)) return;
+      seen.add(pl.id);
+      const isLikedSongs = (pl.name || "").toLowerCase() === "liked songs";
+      items.push({
+        id: pl.id,
+        kind: "playlist",
+        title: pl.name,
+        type: "Playlist",
+        owner: isLikedSongs
+          ? `${likedCount} ${likedCount === 1 ? "song" : "songs"}`
+          : pl.user_username || pl.owner_name || "",
+        ownerEligible: true,
+        image: pl.image_url,
+        round: false,
+        likedSongs: isLikedSongs,
+      });
     });
-  });
-
-  (artists?.artists ?? []).forEach((ar) => {
-    items.push({
-      kind: "artist",
-      title: ar.name,
-      type: "Artist",
-      owner: ar.name,
-      ownerEligible: false,
-      image: ar.image_url,
-      round: true,
-    });
-  });
 
   (albums?.albums ?? []).forEach((al) => {
+    if (!al?.id || seen.has(al.id)) return;
+    seen.add(al.id);
     items.push({
+      id: al.id,
       kind: "album",
       title: al.title,
       type: "Album",
@@ -177,6 +199,21 @@ async function fetchLibraryItems() {
       ownerEligible: true,
       image: al.cover_image_url,
       round: false,
+    });
+  });
+
+  (artists?.artists ?? []).forEach((ar) => {
+    if (!ar?.id || seen.has(ar.id)) return;
+    seen.add(ar.id);
+    items.push({
+      id: ar.id,
+      kind: "artist",
+      title: ar.name,
+      type: "Artist",
+      owner: ar.name,
+      ownerEligible: false,
+      image: ar.image_url,
+      round: true,
     });
   });
 
@@ -228,7 +265,14 @@ export function initLibrary() {
 
     const visible = getFilteredItems();
     list.innerHTML = "";
-    if (!items.length) return;
+    if (!items.length) {
+      const empty = document.createElement("li");
+      empty.className = "library-item library-item--empty";
+      empty.textContent =
+        "Your library is empty — follow artists and save albums to see them here.";
+      list.appendChild(empty);
+      return;
+    }
 
     if (!visible.length) {
       const empty = document.createElement("li");
@@ -301,7 +345,7 @@ export function initLibrary() {
 
   applyView();
 
-  (async () => {
+  async function loadItems() {
     try {
       items = await fetchLibraryItems();
       list.removeAttribute("aria-busy");
@@ -315,5 +359,12 @@ export function initLibrary() {
       list.appendChild(fallback);
       console.error(error);
     }
-  })();
+  }
+
+  window.addEventListener("library:refresh", () => {
+    list.setAttribute("aria-busy", "true");
+    loadItems();
+  });
+
+  loadItems();
 }

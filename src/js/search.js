@@ -274,10 +274,15 @@ const debouncedSearch = debounce((q) => {
   fetchSearch(q);
 }, 300);
 
-function navigateToDetail(type, id, fallbackTitle) {
+export function navigateToDetail(type, id, fallbackTitle) {
   hideAllDropdowns();
   input.blur();
   const cleanType = (type || "playlist").toLowerCase();
+  if (cleanType === "liked") {
+    history.pushState({ type: "liked" }, "", "/liked");
+    renderLikedSongs();
+    return;
+  }
   // normalize plural
   const singular = cleanType.endsWith("s") ? cleanType.slice(0, -1) : cleanType;
   const url = `/${singular}/${id}`;
@@ -298,12 +303,23 @@ async function renderDetail(type, id, fallbackTitle) {
   const endpoint = endpointMap[type] || `/api/playlists/${id}`;
 
   try {
-    const data = await httpRequest.get(endpoint);
+    const data = await httpRequest.get(endpoint, { auth: true });
     const entity = data.playlist || data.artist || data.album || data.track || data.data || data;
     const title = entity.title || entity.name || fallbackTitle || "Untitled";
     const subtitle = entity.description || entity.bio || entity.artist_name || "";
     const cover = entity.image_url || entity.cover_image_url || entity.background_image_url || "";
     const tracks = entity.tracks || [];
+
+    const isFollow = type === "artist" || type === "playlist";
+    const isLike = type === "album" || type === "track";
+    const followable = isFollow || isLike;
+    let following = !!(isFollow ? entity.is_following : entity.is_liked);
+
+    const followBtn = followable
+      ? isFollow
+        ? `<button class="pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm" type="button" data-detail-follow aria-pressed="${following}">${following ? "Following" : "Follow"}</button>`
+        : `<button class="detail-heart${following ? " is-active" : ""}" type="button" data-detail-follow aria-label="${following ? "Remove from Liked Songs" : "Save to Liked Songs"}" aria-pressed="${following}"><i class="ph-fill ph-heart text-[24px] leading-none" aria-hidden="true"></i></button>`
+      : "";
 
     detailView.innerHTML = `
       <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
@@ -312,12 +328,13 @@ async function renderDetail(type, id, fallbackTitle) {
       </button>
       <div class="detail-header flex gap-6 p-6 rounded-lg bg-elevated">
         <img src="${cover || "https://images.pexels.com/photos/1780838/pexels-photo-1780838.jpeg"}" alt="" class="detail-cover w-48 h-48 rounded-md object-cover shrink-0" />
-        <div class="min-w-0">
+        <div class="min-w-0 flex-1">
           <p class="text-sm font-bold uppercase text-subdued">${type}</p>
           <h1 class="detail-title mt-2 text-3xl font-extrabold text-white">${escapeHtml(title)}</h1>
           ${subtitle ? `<p class="detail-subtitle mt-2 text-sm text-subdued line-clamp-3">${escapeHtml(subtitle)}</p>` : ""}
           ${entity.user_display_name ? `<p class="mt-2 text-sm text-white">By ${escapeHtml(entity.user_display_name)}</p>` : ""}
           ${entity.monthly_listeners ? `<p class="mt-2 text-sm text-subdued">${Number(entity.monthly_listeners).toLocaleString("vi-VN")} monthly listeners</p>` : ""}
+          ${followBtn ? `<div class="detail-actions mt-4 flex items-center gap-3">${followBtn}</div>` : ""}
         </div>
       </div>
       ${tracks.length ? `<div class="detail-tracks mt-6"><h2 class="text-lg font-bold text-white mb-3">Tracks</h2><ul class="flex flex-col gap-1">${tracks.map((t, i) => `<li class="flex items-center gap-3 p-2 rounded hover:bg-elevated text-sm text-white"><span class="w-6 text-subdued">${i + 1}</span><span class="truncate">${escapeHtml(t.title || t.name || "Track")}</span><span class="ml-auto text-subdued">${t.artist_name || ""}</span></li>`).join("")}</ul></div>` : ""}
@@ -325,6 +342,42 @@ async function renderDetail(type, id, fallbackTitle) {
     detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => {
       history.back();
     });
+
+    const followEl = detailView.querySelector("[data-detail-follow]");
+    if (followable && followEl) {
+      const updateFollowBtn = () => {
+        if (isFollow) {
+          followEl.className = `pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm`;
+          followEl.textContent = following ? "Following" : "Follow";
+          followEl.setAttribute("aria-pressed", String(following));
+        } else {
+          followEl.classList.toggle("is-active", following);
+          followEl.setAttribute("aria-pressed", String(following));
+          followEl.setAttribute(
+            "aria-label",
+            following ? "Remove from Liked Songs" : "Save to Liked Songs",
+          );
+        }
+      };
+
+      followEl.addEventListener("click", async () => {
+        const url = isFollow
+          ? `/api/${type}s/${id}/follow`
+          : `/api/${type}s/${id}/like`;
+        try {
+          if (following) {
+            await httpRequest.delete(url, { auth: true });
+          } else {
+            await httpRequest.post(url, {}, { auth: true });
+          }
+          following = !following;
+          updateFollowBtn();
+          window.dispatchEvent(new Event("library:refresh"));
+        } catch (error) {
+          showToast(error.message || "Không thể cập nhật. Vui lòng thử lại.");
+        }
+      });
+    }
   } catch (e) {
     detailView.innerHTML = `
       <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
@@ -339,6 +392,96 @@ async function renderDetail(type, id, fallbackTitle) {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function formatDuration(sec) {
+  if (!sec) return "";
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+async function renderLikedSongs() {
+  showDetail();
+  detailView.innerHTML = `<div class="detail-loading"><p class="text-white">Đang tải...</p></div>`;
+
+  try {
+    const data = await httpRequest.get("/api/me/tracks/liked?limit=50", { auth: true });
+    const tracks = data.tracks || [];
+    const countText = `${tracks.length} ${tracks.length === 1 ? "song" : "songs"}`;
+
+    detailView.innerHTML = `
+      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
+        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
+        <span>Quay lại</span>
+      </button>
+      <div class="detail-header flex gap-6 p-6 rounded-lg bg-elevated">
+        <div class="liked-cover shrink-0" aria-hidden="true">
+          <i class="ph-fill ph-heart text-[32px] leading-none"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-bold uppercase text-subdued">Playlist</p>
+          <h1 class="detail-title mt-2 text-3xl font-extrabold text-white">Liked Songs</h1>
+          <p class="mt-2 text-sm text-subdued">${countText}</p>
+        </div>
+      </div>
+      <div class="detail-tracks mt-6">
+        <h2 class="text-lg font-bold text-white mb-3">Tracks</h2>
+        <ul class="flex flex-col gap-1" data-liked-list>
+          ${tracks.length ? tracks.map((t, i) => `
+            <li class="flex items-center gap-3 p-2 rounded hover:bg-elevated text-sm text-white" data-track-id="${escapeHtml(t.id)}">
+              <span class="w-6 text-subdued">${i + 1}</span>
+              <img src="${escapeHtml(t.image_url || t.album_cover_image_url || "")}" alt="" class="liked-track-cover" width="40" height="40" loading="lazy" />
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-semibold">${escapeHtml(t.title || "Track")}</p>
+                <p class="truncate text-subdued">${escapeHtml(t.artist_name || "")}</p>
+              </div>
+              ${t.duration ? `<span class="text-subdued">${formatDuration(t.duration)}</span>` : ""}
+              <button class="detail-heart is-active" type="button" data-liked-unlike aria-label="Remove from Liked Songs" aria-pressed="true">
+                <i class="ph-fill ph-heart text-[20px] leading-none" aria-hidden="true"></i>
+              </button>
+            </li>`).join("") : `<li class="p-2 text-subdued text-sm">No liked songs yet.</li>`}
+        </ul>
+      </div>
+    `;
+
+    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => history.back());
+
+    detailView.querySelectorAll("[data-liked-unlike]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const row = btn.closest("[data-track-id]");
+        const trackId = row?.dataset.trackId;
+        if (!trackId) return;
+        try {
+          await httpRequest.delete(`/api/tracks/${trackId}/like`, { auth: true });
+          row?.remove();
+          window.dispatchEvent(new Event("library:refresh"));
+        } catch (error) {
+          showToast(error.message || "Không thể cập nhật. Vui lòng thử lại.");
+        }
+      });
+    });
+  } catch (error) {
+    detailView.innerHTML = `
+      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
+        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
+        <span>Quay lại</span>
+      </button>
+      <p class="text-subdued">Không thể tải danh sách. ${escapeHtml(error.message || "")}</p>
+    `;
+    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => history.back());
+  }
+}
+
+let toastTimer;
+function showToast(message) {
+  const toastEl = document.getElementById("toast");
+  if (!toastEl) return;
+  const msgEl = toastEl.querySelector(".toast__message");
+  if (msgEl) msgEl.textContent = message;
+  toastEl.classList.add("is-visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2500);
 }
 
 export function initSearch() {
@@ -415,6 +558,10 @@ export function initSearch() {
   // popstate for detail back
   window.addEventListener("popstate", () => {
     const path = location.pathname;
+    if (path === "/liked") {
+      renderLikedSongs();
+      return;
+    }
     const match = path.match(/^\/(playlist|artist|album|track)\/([^/]+)/);
     if (match) {
       const [, type, id] = match;
@@ -426,9 +573,13 @@ export function initSearch() {
   });
 
   // if direct load with /playlist/:id etc, show detail
-  const initialMatch = location.pathname.match(/^\/(playlist|artist|album|track)\/([^/]+)/);
-  if (initialMatch) {
-    const [, type, id] = initialMatch;
-    renderDetail(type, id);
+  if (location.pathname === "/liked") {
+    renderLikedSongs();
+  } else {
+    const initialMatch = location.pathname.match(/^\/(playlist|artist|album|track)\/([^/]+)/);
+    if (initialMatch) {
+      const [, type, id] = initialMatch;
+      renderDetail(type, id);
+    }
   }
 }

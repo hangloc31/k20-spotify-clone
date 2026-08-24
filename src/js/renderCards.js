@@ -23,13 +23,21 @@ function createCoverImage({ src, alt }) {
   return img;
 }
 
+function bindDetail(el, type, id, title) {
+  el.dataset.detail = "";
+  el.dataset.type = type;
+  el.dataset.id = id;
+  el.dataset.title = title;
+  el.href = `/${type}/${id}`;
+}
+
 export function createTrackCard(track) {
   const li = document.createElement("li");
   li.className = "media-card";
 
   const link = document.createElement("a");
   link.className = "media-card__link";
-  link.href = "#";
+  bindDetail(link, "track", track.id, track.title);
   link.setAttribute("aria-label", track.title);
   li.appendChild(link);
 
@@ -44,7 +52,7 @@ export function createTrackCard(track) {
 
   const playLink = document.createElement("a");
   playLink.className = "media-card__play";
-  playLink.href = "#";
+  bindDetail(playLink, "track", track.id, track.title);
   playLink.setAttribute("aria-label", `Play ${track.title}`);
 
   const playIcon = document.createElement("i");
@@ -60,13 +68,13 @@ export function createTrackCard(track) {
 
   const title = document.createElement("a");
   title.className = "media-card__title";
-  title.href = "#";
+  bindDetail(title, "track", track.id, track.title);
   title.textContent = track.title;
   body.appendChild(title);
 
   const subtitle = document.createElement("a");
   subtitle.className = "media-card__subtitle";
-  subtitle.href = "#";
+  bindDetail(subtitle, "track", track.id, track.title);
   subtitle.textContent = track.artist_name;
   body.appendChild(subtitle);
 
@@ -81,7 +89,7 @@ export function createArtistCard(artist) {
 
   const link = document.createElement("a");
   link.className = "media-card__link";
-  link.href = "#";
+  bindDetail(link, "artist", artist.id, artist.name);
   link.setAttribute("aria-label", artist.name);
   li.appendChild(link);
 
@@ -96,7 +104,7 @@ export function createArtistCard(artist) {
 
   const playLink = document.createElement("a");
   playLink.className = "media-card__play";
-  playLink.href = "#";
+  bindDetail(playLink, "artist", artist.id, artist.name);
   playLink.setAttribute("aria-label", `Play ${artist.name}`);
 
   const playIcon = document.createElement("i");
@@ -112,13 +120,13 @@ export function createArtistCard(artist) {
 
   const title = document.createElement("a");
   title.className = "media-card__title";
-  title.href = "#";
+  bindDetail(title, "artist", artist.id, artist.name);
   title.textContent = artist.name;
   body.appendChild(title);
 
   const subtitle = document.createElement("a");
   subtitle.className = "media-card__subtitle";
-  subtitle.href = "#";
+  bindDetail(subtitle, "artist", artist.id, artist.name);
   subtitle.textContent = "Artist";
   body.appendChild(subtitle);
 
@@ -133,7 +141,7 @@ export function createAlbumCard(album) {
 
   const link = document.createElement("a");
   link.className = "media-card__link";
-  link.href = "#";
+  bindDetail(link, "album", album.id, album.title);
   link.setAttribute("aria-label", album.title);
   li.appendChild(link);
 
@@ -148,7 +156,7 @@ export function createAlbumCard(album) {
 
   const playLink = document.createElement("a");
   playLink.className = "media-card__play";
-  playLink.href = "#";
+  bindDetail(playLink, "album", album.id, album.title);
   playLink.setAttribute("aria-label", `Play ${album.title}`);
 
   const playIcon = document.createElement("i");
@@ -164,13 +172,13 @@ export function createAlbumCard(album) {
 
   const title = document.createElement("a");
   title.className = "media-card__title";
-  title.href = "#";
+  bindDetail(title, "album", album.id, album.title);
   title.textContent = album.title;
   body.appendChild(title);
 
   const subtitle = document.createElement("a");
   subtitle.className = "media-card__subtitle";
-  subtitle.href = "#";
+  bindDetail(subtitle, "album", album.id, album.title);
   subtitle.textContent = album.artist_name;
   body.appendChild(subtitle);
 
@@ -185,7 +193,7 @@ export function createPlaylistCard(playlist) {
 
   const link = document.createElement("a");
   link.className = "media-card__link";
-  link.href = "#";
+  bindDetail(link, "playlist", playlist.id, playlist.name);
   link.setAttribute("aria-label", playlist.name);
   li.appendChild(link);
 
@@ -200,7 +208,7 @@ export function createPlaylistCard(playlist) {
 
   const playLink = document.createElement("a");
   playLink.className = "media-card__play";
-  playLink.href = "#";
+  bindDetail(playLink, "playlist", playlist.id, playlist.name);
   playLink.setAttribute("aria-label", `Play ${playlist.name}`);
 
   const playIcon = document.createElement("i");
@@ -216,13 +224,13 @@ export function createPlaylistCard(playlist) {
 
   const title = document.createElement("a");
   title.className = "media-card__title";
-  title.href = "#";
+  bindDetail(title, "playlist", playlist.id, playlist.name);
   title.textContent = playlist.name;
   body.appendChild(title);
 
   const subtitle = document.createElement("a");
   subtitle.className = "media-card__subtitle";
-  subtitle.href = "#";
+  bindDetail(subtitle, "playlist", playlist.id, playlist.name);
   subtitle.textContent = playlist.description;
   body.appendChild(subtitle);
 

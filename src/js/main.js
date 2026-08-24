@@ -7,7 +7,7 @@ import {
 } from "./renderCards.js";
 import { initCarousels } from "./carouselBtn.js";
 import { ensureSession, initAuthUI } from "./authUI.js";
-import { initSearch } from "./search.js";
+import { initSearch, navigateToDetail } from "./search.js";
 import { initLibrary } from "./library.js";
 
 async function renderTrendingSongs() {
@@ -116,3 +116,10 @@ await renderPopularArtist();
 await renderPopularAlbums();
 await renderAllPlaylists();
 initCarousels();
+
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("a[data-detail]");
+  if (!link) return;
+  e.preventDefault();
+  navigateToDetail(link.dataset.type, link.dataset.id, link.dataset.title);
+});

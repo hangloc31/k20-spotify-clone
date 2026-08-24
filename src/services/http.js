@@ -49,6 +49,7 @@ async function request(url, options = {}, timeout = 10000) {
     const { getAccessToken } = await import("./auth.js");
     const token = getAccessToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
+    fetchOptions.cache = "no-store";
   }
 
   try {
@@ -83,5 +84,12 @@ export const httpRequest = {
       method: "POST",
       headers: { "Content-Type": "application/json", ...options?.headers },
       body: JSON.stringify(body),
+    }),
+
+  delete: (url, options) =>
+    request(url, {
+      ...options,
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", ...options?.headers },
     }),
 };
