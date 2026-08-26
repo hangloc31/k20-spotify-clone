@@ -111,6 +111,12 @@ function createBody(item) {
 function createLibraryItem(item, view) {
   const li = document.createElement("li");
   li.className = `library-item library-item--${item.kind}`;
+  if (item.id) {
+    li.dataset.id = item.id;
+    li.dataset.kind = item.kind;
+    li.dataset.isOwn = String(!!item.isOwn);
+    li.dataset.title = item.title;
+  }
 
   const link = document.createElement("a");
   link.className = "library-item__link";
@@ -187,6 +193,7 @@ async function fetchLibraryItems() {
       if (!pl?.id || seen.has(pl.id)) return;
       seen.add(pl.id);
       const isLikedSongs = (pl.name || "").toLowerCase() === "liked songs";
+      const isOwn = (own?.playlists ?? []).some((op) => op?.id === pl.id);
       pushItem({
         id: pl.id,
         kind: "playlist",
@@ -199,6 +206,7 @@ async function fetchLibraryItems() {
         image: pl.image_url,
         round: false,
         likedSongs: isLikedSongs,
+        isOwn,
       });
     });
 
@@ -214,6 +222,7 @@ async function fetchLibraryItems() {
       ownerEligible: true,
       image: al.cover_image_url,
       round: false,
+      isOwn: false,
     });
   });
 
@@ -229,6 +238,7 @@ async function fetchLibraryItems() {
       ownerEligible: false,
       image: ar.image_url,
       round: true,
+      isOwn: false,
     });
   });
 
@@ -419,8 +429,102 @@ export function initLibrary() {
     if (e.key === "Escape") {
       closeMenu();
       closeSortMenu();
+      closeContextMenu();
     }
   });
+
+  // ---- Context menu ----
+  const contextMenu = document.getElementById("context-menu");
+  let contextTarget = null;
+  let toastTimer;
+
+  function showToast(message) {
+    const toastEl = document.getElementById("toast");
+    if (!toastEl) return;
+    const msgEl = toastEl.querySelector(".toast__message");
+    if (msgEl) msgEl.textContent = message;
+    toastEl.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2500);
+  }
+
+  function closeContextMenu() {
+    contextMenu?.setAttribute("hidden", "");
+    contextTarget = null;
+  }
+
+  function showContextMenu(e, dataset) {
+    if (!contextMenu || !dataset.id) return;
+    contextTarget = { id: dataset.id, kind: dataset.kind, isOwn: dataset.isOwn === "true" };
+
+    const isArtist = contextTarget.kind === "artist";
+    const isPlaylist = contextTarget.kind === "playlist";
+    const isAlbum = contextTarget.kind === "album";
+    const isLikedSongs = !dataset.id || dataset.kind === "liked";
+
+    if (isLikedSongs) return;
+
+    contextMenu.querySelector("[data-context-action='unfollow']").hidden = !isArtist;
+    contextMenu.querySelector("[data-context-action='remove']").hidden = !(isPlaylist || isAlbum);
+    contextMenu.querySelector("[data-context-action='delete']").hidden = !(isPlaylist && contextTarget.isOwn);
+
+    const visibleItems = [...contextMenu.querySelectorAll(".context-menu__item:not([hidden])")];
+    if (!visibleItems.length) return;
+
+    contextMenu.removeAttribute("hidden");
+
+    const menuRect = contextMenu.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let x = e.clientX;
+    let y = e.clientY;
+    if (x + menuRect.width > vw) x = vw - menuRect.width - 8;
+    if (y + menuRect.height > vh) y = vh - menuRect.height - 8;
+    contextMenu.style.left = `${Math.max(0, x)}px`;
+    contextMenu.style.top = `${Math.max(0, y)}px`;
+  }
+
+  list.addEventListener("contextmenu", (e) => {
+    const li = e.target.closest(".library-item");
+    if (!li) return;
+    e.preventDefault();
+    showContextMenu(e, li.dataset);
+  });
+
+  contextMenu?.querySelectorAll("[data-context-action]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!contextTarget) return;
+      const { id, kind, isOwn } = contextTarget;
+      const action = btn.dataset.contextAction;
+      try {
+        if (action === "unfollow") {
+          await httpRequest.delete(`/api/${kind}s/${id}/follow`, { auth: true });
+        } else if (action === "remove") {
+          if (kind === "playlist") {
+            await httpRequest.delete(`/api/playlists/${id}/follow`, { auth: true });
+          } else if (kind === "album") {
+            await httpRequest.delete(`/api/albums/${id}/like`, { auth: true });
+          }
+        } else if (action === "delete") {
+          await httpRequest.delete(`/api/playlists/${id}`, { auth: true });
+        }
+        closeContextMenu();
+        window.dispatchEvent(new Event("library:refresh"));
+        showToast("Đã cập nhật thư viện.");
+      } catch (error) {
+        showToast(error.message || "Không thể thực hiện. Vui lòng thử lại.");
+        console.error(error);
+      }
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!contextMenu?.hasAttribute("hidden") && !contextMenu?.contains(e.target)) {
+      closeContextMenu();
+    }
+  });
+
+  document.addEventListener("scroll", () => closeContextMenu(), true);
 
   applyView();
 

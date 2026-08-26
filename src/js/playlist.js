@@ -86,27 +86,20 @@ export function enablePlaylistEditing({ id, entity }) {
   let pendingFile = null;
 
   function refreshDom({ name, description, cover }) {
-    const titleEl = detailView.querySelector(".detail-title");
-    let subtitleEl = detailView.querySelector(".detail-subtitle");
+    const titleEl = detailView.querySelector(".detail-hero__title");
+    const metaEl = detailView.querySelector(".detail-hero__meta");
     if (titleEl) titleEl.textContent = name;
-    if (description !== undefined) {
-      if (description) {
-        if (subtitleEl) {
-          subtitleEl.textContent = description;
-        } else {
-          subtitleEl = document.createElement("p");
-          subtitleEl.className =
-            "detail-subtitle mt-2 text-sm text-subdued line-clamp-3";
-          subtitleEl.textContent = description;
-          titleEl?.insertAdjacentElement("afterend", subtitleEl);
-        }
-      } else if (subtitleEl) {
-        subtitleEl.remove();
-      }
+    if (description !== undefined && metaEl) {
+      const parts = [];
+      if (entity.user_display_name) parts.push(`By ${entity.user_display_name}`);
+      if (description) parts.push(description);
+      metaEl.textContent = parts.join(" · ");
     }
     if (cover) {
       currentCover = cover;
       if (coverEl) coverEl.src = resolveUrl(cover);
+      const bg = detailView.querySelector(".detail-hero__bg");
+      if (bg) bg.style.backgroundImage = `url('${resolveUrl(cover)}')`;
     }
     if (visibilityBtn) {
       visibilityBtn.textContent = isPublic ? "Make private" : "Make public";

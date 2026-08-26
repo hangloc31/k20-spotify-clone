@@ -27,3 +27,10 @@ dist-ssr
 # Project rules & docs
 AGENTS.md
 docs/
+
+# Playwright / test artifacts
+.playwright-mcp/
+.playwright-demo/
+playwright-report/
+test-results/
+coverage/

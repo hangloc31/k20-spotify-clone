@@ -311,6 +311,8 @@ async function renderDetail(type, id, fallbackTitle) {
     const subtitle = entity.description || entity.bio || entity.artist_name || "";
     const cover = entity.image_url || entity.cover_image_url || entity.background_image_url || "";
     const tracks = entity.tracks || [];
+    const FALLBACK = "https://images.pexels.com/photos/1780838/pexels-photo-1780838.jpeg";
+    const coverUrl = cover || FALLBACK;
 
     const isFollow = type === "artist" || type === "playlist";
     const isLike = type === "album" || type === "track";
@@ -325,43 +327,86 @@ async function renderDetail(type, id, fallbackTitle) {
 
     const followBtn = followable
       ? isFollow
-        ? `<button class="pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm" type="button" data-detail-follow aria-pressed="${following}">${following ? "Following" : "Follow"}</button>`
-        : `<button class="detail-heart${following ? " is-active" : ""}" type="button" data-detail-follow aria-label="${following ? "Remove from Liked Songs" : "Save to Liked Songs"}" aria-pressed="${following}"><i class="ph-fill ph-heart text-[24px] leading-none" aria-hidden="true"></i></button>`
+        ? `<button class="pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-5 py-2 text-sm" type="button" data-detail-follow aria-pressed="${following}">${following ? "Following" : "Follow"}</button>`
+        : `<button class="detail-heart-btn${following ? " is-active" : ""}" type="button" data-detail-follow aria-label="${following ? "Remove from Liked Songs" : "Save to Liked Songs"}" aria-pressed="${following}"><i class="ph-fill ph-heart text-[24px] leading-none" aria-hidden="true"></i></button>`
       : "";
 
     const actionsHtml = isOwner
-      ? `<div class="detail-actions mt-4 flex items-center gap-3">
-           <button class="pill-button ${entity.is_public ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm" type="button" data-playlist-visibility data-is-public="${!!entity.is_public}">${entity.is_public ? "Make private" : "Make public"}</button>
-           <button class="pill-button pill-button--ghost px-4 py-2 text-sm" type="button" data-playlist-edit>
+      ? `<div class="detail-hero__actions">
+           <button class="detail-play-btn" type="button" aria-label="Play"><i class="ph-fill ph-play text-[24px] leading-none" aria-hidden="true"></i></button>
+           <button class="pill-button ${entity.is_public ? "pill-button--ghost" : "pill-button--white"} px-5 py-2 text-sm" type="button" data-playlist-visibility data-is-public="${!!entity.is_public}">${entity.is_public ? "Make private" : "Make public"}</button>
+           <button class="pill-button pill-button--ghost px-5 py-2 text-sm" type="button" data-playlist-edit>
              <i class="ph-fill ph-pencil text-[14px] leading-none" aria-hidden="true"></i>
              <span>Edit</span>
            </button>
          </div>`
-      : followBtn
-        ? `<div class="detail-actions mt-4 flex items-center gap-3">${followBtn}</div>`
-        : "";
+      : `<div class="detail-hero__actions">
+           <button class="detail-play-btn" type="button" aria-label="Play"><i class="ph-fill ph-play text-[24px] leading-none" aria-hidden="true"></i></button>
+           ${followBtn}
+         </div>`;
+
+    const metaHtml = [
+      entity.user_display_name ? `By ${escapeHtml(entity.user_display_name)}` : "",
+      entity.monthly_listeners ? `${Number(entity.monthly_listeners).toLocaleString("vi-VN")} monthly listeners` : "",
+      subtitle ? escapeHtml(subtitle) : "",
+    ].filter(Boolean).join(" · ");
+
+    const isRound = type === "artist";
+    const coverClasses = `detail-hero__cover${isRound ? " detail-hero__cover--round" : ""}${isOwner ? " detail-cover--editable" : ""}`;
+
+    let trackTableHtml = "";
+    if (tracks.length > 0) {
+      const showAlbumCol = type !== "album";
+      const albumHeader = showAlbumCol ? `<span class="detail-tracks__album">Album</span>` : "";
+      const trackRows = tracks.map((t, i) => {
+        const thumb = t.album_cover_image_url || t.image_url || coverUrl;
+        const albumCell = showAlbumCol ? `<span class="detail-tracks__album">${escapeHtml(t.album_title || "")}</span>` : "";
+        return `<li class="detail-track" data-track-index="${i}">
+          <span class="detail-track__number">${i + 1}</span>
+          <button class="detail-track__play-btn" type="button" aria-label="Play ${escapeHtml(t.title || "")}"><i class="ph-fill ph-play text-[14px] leading-none" aria-hidden="true"></i></button>
+          <img class="detail-track__thumb" src="${escapeHtml(thumb)}" alt="" width="40" height="40" loading="lazy" />
+          <div class="detail-track__info">
+            <span class="detail-track__title">${escapeHtml(t.title || t.name || "Track")}</span>
+            <span class="detail-track__artist">${escapeHtml(t.artist_name || "")}</span>
+          </div>
+          ${albumCell}
+          <span class="detail-tracks__duration">${t.duration ? formatDuration(t.duration) : ""}</span>
+        </li>`;
+      }).join("");
+
+      trackTableHtml = `
+        <div class="detail-tracks">
+          <div class="detail-tracks__header">
+            <span class="detail-tracks__num-col">#</span>
+            <span class="detail-tracks__title-col">Title</span>
+            ${albumHeader}
+            <span class="detail-tracks__duration-col"><i class="ph-fill ph-clock text-[14px] leading-none" aria-hidden="true"></i></span>
+          </div>
+          <ol class="detail-tracks__list">${trackRows}</ol>
+        </div>`;
+    }
 
     detailView.innerHTML = `
-      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
-        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Quay lại</span>
-      </button>
-      <div class="detail-header flex gap-6 p-6 rounded-lg bg-elevated">
-        <img src="${cover || "https://images.pexels.com/photos/1780838/pexels-photo-1780838.jpeg"}" alt="" class="detail-cover w-48 h-48 rounded-md object-cover shrink-0${isOwner ? " detail-cover--editable" : ""}" ${isOwner ? 'data-playlist-cover' : ""} />
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-bold uppercase text-subdued">${type}</p>
-          <h1 class="detail-title mt-2 text-3xl font-extrabold text-white${isOwner ? " detail-title--editable" : ""}" ${isOwner ? 'data-playlist-edit' : ""}>${escapeHtml(title)}</h1>
-          ${subtitle ? `<p class="detail-subtitle mt-2 text-sm text-subdued line-clamp-3">${escapeHtml(subtitle)}</p>` : ""}
-          ${entity.user_display_name ? `<p class="mt-2 text-sm text-white">By ${escapeHtml(entity.user_display_name)}</p>` : ""}
-          ${entity.monthly_listeners ? `<p class="mt-2 text-sm text-subdued">${Number(entity.monthly_listeners).toLocaleString("vi-VN")} monthly listeners</p>` : ""}
-          ${actionsHtml}
+      <section class="detail-hero" style="--cover:url('${coverUrl}')">
+        <div class="detail-hero__bg"></div>
+        <div class="detail-hero__gradient"></div>
+        <div class="detail-hero__content">
+          <img
+            class="${coverClasses}"
+            src="${coverUrl}"
+            alt=""
+            ${isOwner ? 'data-playlist-cover' : ""}
+          />
+          <div class="detail-hero__info">
+            <p class="detail-hero__type">${type}</p>
+            <h1 class="detail-hero__title${isOwner ? " detail-title--editable" : ""}" ${isOwner ? 'data-playlist-edit' : ""}>${escapeHtml(title)}</h1>
+            ${metaHtml ? `<p class="detail-hero__meta">${metaHtml}</p>` : ""}
+            ${actionsHtml}
+          </div>
         </div>
-      </div>
-      ${tracks.length ? `<div class="detail-tracks mt-6"><h2 class="text-lg font-bold text-white mb-3">Tracks</h2><ul class="flex flex-col gap-1">${tracks.map((t, i) => `<li class="flex items-center gap-3 p-2 rounded hover:bg-elevated text-sm text-white"><span class="w-6 text-subdued">${i + 1}</span><span class="truncate">${escapeHtml(t.title || t.name || "Track")}</span><span class="ml-auto text-subdued">${t.artist_name || ""}</span></li>`).join("")}</ul></div>` : ""}
+      </section>
+      ${trackTableHtml}
     `;
-    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => {
-      history.back();
-    });
 
     if (isOwner) {
       enablePlaylistEditing({ id, entity });
@@ -371,7 +416,7 @@ async function renderDetail(type, id, fallbackTitle) {
     if (followable && followEl) {
       const updateFollowBtn = () => {
         if (isFollow) {
-          followEl.className = `pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm`;
+          followEl.className = `pill-button ${following ? "pill-button--ghost" : "pill-button--white"} px-5 py-2 text-sm`;
           followEl.textContent = following ? "Following" : "Follow";
           followEl.setAttribute("aria-pressed", String(following));
         } else {
@@ -404,13 +449,8 @@ async function renderDetail(type, id, fallbackTitle) {
     }
   } catch (e) {
     detailView.innerHTML = `
-      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
-        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Quay lại</span>
-      </button>
-      <p class="text-subdued">Không thể tải chi tiết. ${escapeHtml(e.message || "")}</p>
+      <p class="text-subdued mt-8 px-8">Không thể tải chi tiết. ${escapeHtml(e.message || "")}</p>
     `;
-    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => history.back());
   }
 }
 
@@ -434,42 +474,50 @@ async function renderLikedSongs() {
     const tracks = data.tracks || [];
     const countText = `${tracks.length} ${tracks.length === 1 ? "song" : "songs"}`;
 
-    detailView.innerHTML = `
-      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
-        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Quay lại</span>
-      </button>
-      <div class="detail-header flex gap-6 p-6 rounded-lg bg-elevated">
-        <div class="liked-cover shrink-0" aria-hidden="true">
-          <i class="ph-fill ph-heart text-[32px] leading-none"></i>
+    const trackRows = tracks.map((t, i) => {
+      const thumb = t.image_url || t.album_cover_image_url || "";
+      return `<li class="detail-track" data-track-id="${escapeHtml(t.id)}">
+        <span class="detail-track__number">${i + 1}</span>
+        <button class="detail-track__play-btn" type="button" aria-label="Play ${escapeHtml(t.title || "")}"><i class="ph-fill ph-play text-[14px] leading-none" aria-hidden="true"></i></button>
+        ${thumb ? `<img class="detail-track__thumb" src="${escapeHtml(thumb)}" alt="" width="40" height="40" loading="lazy" />` : ""}
+        <div class="detail-track__info">
+          <span class="detail-track__title">${escapeHtml(t.title || "Track")}</span>
+          <span class="detail-track__artist">${escapeHtml(t.artist_name || "")}</span>
         </div>
-        <div class="min-w-0 flex-1">
-          <p class="text-sm font-bold uppercase text-subdued">Playlist</p>
-          <h1 class="detail-title mt-2 text-3xl font-extrabold text-white">Liked Songs</h1>
-          <p class="mt-2 text-sm text-subdued">${countText}</p>
-        </div>
-      </div>
-      <div class="detail-tracks mt-6">
-        <h2 class="text-lg font-bold text-white mb-3">Tracks</h2>
-        <ul class="flex flex-col gap-1" data-liked-list>
-          ${tracks.length ? tracks.map((t, i) => `
-            <li class="flex items-center gap-3 p-2 rounded hover:bg-elevated text-sm text-white" data-track-id="${escapeHtml(t.id)}">
-              <span class="w-6 text-subdued">${i + 1}</span>
-              <img src="${escapeHtml(t.image_url || t.album_cover_image_url || "")}" alt="" class="liked-track-cover" width="40" height="40" loading="lazy" />
-              <div class="min-w-0 flex-1">
-                <p class="truncate font-semibold">${escapeHtml(t.title || "Track")}</p>
-                <p class="truncate text-subdued">${escapeHtml(t.artist_name || "")}</p>
-              </div>
-              ${t.duration ? `<span class="text-subdued">${formatDuration(t.duration)}</span>` : ""}
-              <button class="detail-heart is-active" type="button" data-liked-unlike aria-label="Remove from Liked Songs" aria-pressed="true">
-                <i class="ph-fill ph-heart text-[20px] leading-none" aria-hidden="true"></i>
-              </button>
-            </li>`).join("") : `<li class="p-2 text-subdued text-sm">No liked songs yet.</li>`}
-        </ul>
-      </div>
-    `;
+        <span class="detail-tracks__duration">${t.duration ? formatDuration(t.duration) : ""}</span>
+        <button class="detail-heart-btn is-active" type="button" data-liked-unlike aria-label="Remove from Liked Songs" aria-pressed="true">
+          <i class="ph-fill ph-heart text-[16px] leading-none" aria-hidden="true"></i>
+        </button>
+      </li>`;
+    }).join("");
 
-    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => history.back());
+    detailView.innerHTML = `
+      <section class="detail-hero detail-hero--liked">
+        <div class="detail-hero__gradient"></div>
+        <div class="detail-hero__content">
+          <div class="detail-hero__cover detail-hero__cover--liked" aria-hidden="true">
+            <i class="ph-fill ph-heart text-[48px] leading-none"></i>
+          </div>
+          <div class="detail-hero__info">
+            <p class="detail-hero__type">Playlist</p>
+            <h1 class="detail-hero__title">Liked Songs</h1>
+            <p class="detail-hero__meta">${countText}</p>
+            <div class="detail-hero__actions">
+              <button class="detail-play-btn" type="button" aria-label="Play Liked Songs"><i class="ph-fill ph-play text-[24px] leading-none" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+      </section>
+      ${tracks.length ? `
+      <div class="detail-tracks">
+        <div class="detail-tracks__header">
+          <span class="detail-tracks__num-col">#</span>
+          <span class="detail-tracks__title-col">Title</span>
+          <span class="detail-tracks__duration-col"><i class="ph-fill ph-clock text-[14px] leading-none" aria-hidden="true"></i></span>
+        </div>
+        <ol class="detail-tracks__list">${trackRows}</ol>
+      </div>` : `<p class="text-subdued mt-8 px-6">No liked songs yet.</p>`}
+    `;
 
     detailView.querySelectorAll("[data-liked-unlike]").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -487,13 +535,8 @@ async function renderLikedSongs() {
     });
   } catch (error) {
     detailView.innerHTML = `
-      <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
-        <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Quay lại</span>
-      </button>
-      <p class="text-subdued">Không thể tải danh sách. ${escapeHtml(error.message || "")}</p>
+      <p class="text-subdued mt-8 px-8">Không thể tải danh sách. ${escapeHtml(error.message || "")}</p>
     `;
-    detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => history.back());
   }
 }
 
