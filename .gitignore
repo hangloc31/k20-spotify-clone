@@ -27,4 +27,3 @@ dist-ssr
 # Project rules & docs
 AGENTS.md
 docs/
-.playwright-mcp/

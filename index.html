@@ -149,6 +149,77 @@
               <span class="text-[16px] font-bold">Your Library</span>
             </button>
             <div class="flex items-center gap-1">
+              <div class="library-view-anchor" data-library-sort-anchor>
+                <button
+                  class="library-view-toggle h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
+                  aria-label="Sort by"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  data-library-sort-toggle
+                  hidden
+                >
+                  <i
+                    class="ph-fill ph-arrows-down-up text-[16px] leading-none"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+                <div
+                  class="library-view-menu"
+                  role="menu"
+                  aria-label="Sort by"
+                  data-library-sort-menu
+                  hidden
+                >
+                  <button
+                    class="library-view-menu__item"
+                    role="menuitemradio"
+                    aria-checked="true"
+                    data-sort-option="recently"
+                  >
+                    <i
+                      class="ph-fill ph-clock text-[16px] leading-none"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Recently added</span>
+                    <i
+                      class="ph-bold ph-check library-view-menu__check"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                  <button
+                    class="library-view-menu__item"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-sort-option="alpha"
+                  >
+                    <i
+                      class="ph-fill ph-text-aa text-[16px] leading-none"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Alphabetical</span>
+                    <i
+                      class="ph-bold ph-check library-view-menu__check"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                  <button
+                    class="library-view-menu__item"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-sort-option="creator"
+                  >
+                    <i
+                      class="ph-fill ph-user text-[16px] leading-none"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Creator</span>
+                    <i
+                      class="ph-bold ph-check library-view-menu__check"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                </div>
+              </div>
               <div class="library-view-anchor" data-library-view-anchor>
               <button
                 class="library-view-toggle h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
@@ -182,7 +253,7 @@
                   ></i>
                   <span>Compact list</span>
                   <i
-                    class="ph-fill ph-check library-view-menu__check"
+                    class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
                   ></i>
                 </button>
@@ -198,7 +269,7 @@
                   ></i>
                   <span>Default list</span>
                   <i
-                    class="ph-fill ph-check library-view-menu__check"
+                    class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
                   ></i>
                 </button>
@@ -214,7 +285,7 @@
                   ></i>
                   <span>Compact grid</span>
                   <i
-                    class="ph-fill ph-check library-view-menu__check"
+                    class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
                   ></i>
                 </button>
@@ -230,7 +301,7 @@
                   ></i>
                   <span>Default grid</span>
                   <i
-                    class="ph-fill ph-check library-view-menu__check"
+                    class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
                   ></i>
                 </button>
@@ -239,6 +310,7 @@
               <button
                 class="flex h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
                 aria-label="Create playlist"
+                data-create-playlist
               >
                 <i
                   class="ph-fill ph-plus text-[16px] leading-none"
@@ -1257,6 +1329,81 @@
         aria-hidden="true"
       ></i>
       <span class="toast__message"></span>
+    </div>
+
+    <!-- ===== Playlist edit modal (own playlists) ===== -->
+    <div
+      id="playlist-edit-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="playlist-edit-title"
+      hidden
+    >
+      <div class="modal__backdrop" data-playlist-edit-close></div>
+      <div class="modal__dialog">
+        <h2 id="playlist-edit-title" class="modal__title">Edit details</h2>
+        <div class="modal__cover">
+          <img
+            class="modal__cover-img"
+            data-playlist-edit-preview
+            alt="Playlist cover preview"
+          />
+          <button
+            class="modal__cover-choose"
+            type="button"
+            data-playlist-edit-choose
+          >
+            <i
+              class="ph-fill ph-image text-[20px] leading-none"
+              aria-hidden="true"
+            ></i>
+            Choose image
+          </button>
+          <input
+            class="modal__file-input"
+            type="file"
+            accept="image/*"
+            data-playlist-edit-file
+            hidden
+          />
+        </div>
+        <div class="modal__field">
+          <label for="playlist-edit-name">Name</label>
+          <input
+            id="playlist-edit-name"
+            type="text"
+            class="modal__input"
+            data-playlist-edit-name
+            maxlength="100"
+          />
+        </div>
+        <div class="modal__field">
+          <label for="playlist-edit-desc">Description</label>
+          <textarea
+            id="playlist-edit-desc"
+            class="modal__input modal__textarea"
+            data-playlist-edit-desc
+            rows="3"
+          ></textarea>
+        </div>
+        <div class="modal__actions">
+          <button
+            class="pill-button pill-button--ghost px-4 py-2 text-sm"
+            type="button"
+            data-playlist-edit-cancel
+          >
+            Cancel
+          </button>
+          <button
+            class="pill-button pill-button--white px-6 py-2 text-sm"
+            type="button"
+            data-playlist-edit-save
+          >
+            Save
+          </button>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="/src/js/main.js"></script>

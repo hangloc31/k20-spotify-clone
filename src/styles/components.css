@@ -1178,6 +1178,7 @@
 
   .library-view-menu__item:hover {
     background-color: var(--color-tinted-hover);
+    color: var(--color-positive);
   }
 
   .library-view-menu__item > span {
@@ -1397,6 +1398,154 @@
     box-shadow:
       0 3px 0 0 var(--color-press),
       0 8px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ---- Playlist edit affordances (detail view) ---- */
+  .detail-cover--editable {
+    cursor: pointer;
+    transition: box-shadow var(--duration-shortest-3) var(--ease-productive);
+  }
+
+  .detail-cover--editable:hover {
+    box-shadow: 0 0 0 3px var(--color-white);
+  }
+
+  .detail-title--editable {
+    cursor: pointer;
+  }
+
+  .detail-title--editable:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- Playlist edit modal ---- */
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+  }
+
+  .modal[hidden] {
+    display: none;
+  }
+
+  .modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .modal__dialog {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--spacing-looser-2);
+    background-color: var(--color-elevated);
+    border-radius: var(--corner-radius-larger-2);
+    box-shadow: var(--shadow-overlay);
+  }
+
+  .modal__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: var(--spacing-looser);
+  }
+
+  .modal__cover {
+    position: relative;
+    width: 192px;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--corner-radius-larger-2);
+    overflow: hidden;
+    background-color: var(--color-decorative-subdued);
+    margin-bottom: var(--spacing-looser);
+  }
+
+  .modal__cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .modal__cover-choose {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 700;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity var(--duration-shortest-3) var(--ease-productive);
+  }
+
+  .modal__cover:hover .modal__cover-choose {
+    opacity: 1;
+  }
+
+  .modal__cover-choose:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .modal__field {
+    margin-bottom: var(--spacing-looser);
+  }
+
+  .modal__field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-white);
+    padding-bottom: var(--spacing-2);
+  }
+
+  .modal__input {
+    width: 100%;
+    padding: var(--spacing-3);
+    font-size: 16px;
+    color: var(--color-white);
+    background-color: var(--color-base);
+    border: 0;
+    border-radius: var(--corner-radius-base);
+    box-shadow: 0 0 0 1px var(--color-muted) inset;
+    transition: box-shadow var(--duration-shortest-3) var(--ease-productive);
+  }
+
+  .modal__input::placeholder {
+    color: var(--color-muted);
+  }
+
+  .modal__input:hover {
+    box-shadow: 0 0 0 1px var(--color-white) inset;
+  }
+
+  .modal__input:focus {
+    outline: 2px solid var(--color-white);
+    outline-offset: 0;
+    box-shadow: 0 0 0 1px var(--color-white) inset;
+  }
+
+  .modal__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-3);
   }
 }
 

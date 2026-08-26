@@ -82,8 +82,22 @@ export const httpRequest = {
     request(url, {
       ...options,
       method: "POST",
-      headers: { "Content-Type": "application/json", ...options?.headers },
-      body: JSON.stringify(body),
+      headers: {
+        ...(body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+        ...options?.headers,
+      },
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
+
+  put: (url, body, options) =>
+    request(url, {
+      ...options,
+      method: "PUT",
+      headers: {
+        ...(body instanceof FormData ? {} : { "Content-Type": "application/json" }),
+        ...options?.headers,
+      },
+      body: body instanceof FormData ? body : JSON.stringify(body),
     }),
 
   delete: (url, options) =>

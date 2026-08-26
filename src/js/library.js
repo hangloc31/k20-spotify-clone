@@ -10,6 +10,10 @@ const VALID_VIEWS = [
 ];
 const DEFAULT_VIEW = "default-list";
 
+const SORT_KEY = "spotify-library-sort";
+const VALID_SORTS = ["recently", "alpha", "creator"];
+const DEFAULT_SORT = "recently";
+
 function isValidCoverUrl(src) {
   if (!src) return false;
   if (src.length > 2000) return false;
@@ -21,6 +25,11 @@ function isValidCoverUrl(src) {
 function getSavedView() {
   const saved = localStorage.getItem(VIEW_KEY);
   return VALID_VIEWS.includes(saved) ? saved : DEFAULT_VIEW;
+}
+
+function getSavedSort() {
+  const saved = localStorage.getItem(SORT_KEY);
+  return VALID_SORTS.includes(saved) ? saved : DEFAULT_SORT;
 }
 
 function createCoverFallback() {
@@ -165,6 +174,12 @@ async function fetchLibraryItems() {
   const items = [];
   const seen = new Set();
   const likedCount = (liked?.tracks ?? []).length;
+  let savedIndex = 0;
+
+  function pushItem(item) {
+    items.push({ ...item, saved_at: Date.now() - savedIndex });
+    savedIndex += 1;
+  }
 
   (own?.playlists ?? [])
     .concat(followed?.playlists ?? [])
@@ -172,7 +187,7 @@ async function fetchLibraryItems() {
       if (!pl?.id || seen.has(pl.id)) return;
       seen.add(pl.id);
       const isLikedSongs = (pl.name || "").toLowerCase() === "liked songs";
-      items.push({
+      pushItem({
         id: pl.id,
         kind: "playlist",
         title: pl.name,
@@ -190,7 +205,7 @@ async function fetchLibraryItems() {
   (albums?.albums ?? []).forEach((al) => {
     if (!al?.id || seen.has(al.id)) return;
     seen.add(al.id);
-    items.push({
+    pushItem({
       id: al.id,
       kind: "album",
       title: al.title,
@@ -205,7 +220,7 @@ async function fetchLibraryItems() {
   (artists?.artists ?? []).forEach((ar) => {
     if (!ar?.id || seen.has(ar.id)) return;
     seen.add(ar.id);
-    items.push({
+    pushItem({
       id: ar.id,
       kind: "artist",
       title: ar.name,
@@ -228,17 +243,22 @@ export function initLibrary() {
   const menu = document.querySelector("[data-library-view-menu]");
   if (!list || !toggleBtn || !menu) return;
 
+  const sortToggleBtn = document.querySelector("[data-library-sort-toggle]");
+  const sortMenu = document.querySelector("[data-library-sort-menu]");
+
   const ctaCards = document.querySelector(".library__content");
   const searchBox = document.querySelector("[data-library-search]");
   const searchInput = document.querySelector("[data-library-search-input]");
   const chipsBox = document.querySelector("[data-library-chips]");
   ctaCards?.setAttribute("hidden", "");
   toggleBtn.removeAttribute("hidden");
+  sortToggleBtn?.removeAttribute("hidden");
   list.removeAttribute("hidden");
   searchBox?.removeAttribute("hidden");
   chipsBox?.removeAttribute("hidden");
 
   let view = getSavedView();
+  let sort = getSavedSort();
   let items = [];
   let filterType = "all";
   let searchTerm = "";
@@ -255,6 +275,26 @@ export function initLibrary() {
     });
   }
 
+  function getSortedItems(filtered) {
+    if (sort === "alpha") {
+      return [...filtered].sort((a, b) =>
+        a.title.localeCompare(b.title, undefined, { sensitivity: "base" }),
+      );
+    }
+    if (sort === "creator") {
+      return [...filtered].sort((a, b) => {
+        const byOwner = a.owner.localeCompare(b.owner, undefined, {
+          sensitivity: "base",
+        });
+        if (byOwner !== 0) return byOwner;
+        return a.title.localeCompare(b.title, undefined, {
+          sensitivity: "base",
+        });
+      });
+    }
+    return [...filtered].sort((a, b) => b.saved_at - a.saved_at);
+  }
+
   function applyView() {
     list.dataset.view = view;
     list.className = `library__list library__list--${view}`;
@@ -262,8 +302,12 @@ export function initLibrary() {
       const isActive = option.dataset.viewOption === view;
       option.setAttribute("aria-checked", String(isActive));
     });
+    sortMenu?.querySelectorAll("[data-sort-option]").forEach((option) => {
+      const isActive = option.dataset.sortOption === sort;
+      option.setAttribute("aria-checked", String(isActive));
+    });
 
-    const visible = getFilteredItems();
+    const visible = getSortedItems(getFilteredItems());
     list.innerHTML = "";
     if (!items.length) {
       const empty = document.createElement("li");
@@ -290,13 +334,30 @@ export function initLibrary() {
     toggleBtn.setAttribute("aria-expanded", "false");
   }
 
+  function closeSortMenu() {
+    sortMenu?.setAttribute("hidden", "");
+    sortToggleBtn?.setAttribute("aria-expanded", "false");
+  }
+
   toggleBtn.addEventListener("click", (e) => {
     e.stopPropagation();
+    closeSortMenu();
     if (menu.hasAttribute("hidden")) {
       menu.removeAttribute("hidden");
       toggleBtn.setAttribute("aria-expanded", "true");
     } else {
       closeMenu();
+    }
+  });
+
+  sortToggleBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeMenu();
+    if (sortMenu.hasAttribute("hidden")) {
+      sortMenu.removeAttribute("hidden");
+      sortToggleBtn.setAttribute("aria-expanded", "true");
+    } else {
+      closeSortMenu();
     }
   });
 
@@ -306,6 +367,15 @@ export function initLibrary() {
       localStorage.setItem(VIEW_KEY, view);
       applyView();
       closeMenu();
+    });
+  });
+
+  sortMenu?.querySelectorAll("[data-sort-option]").forEach((option) => {
+    option.addEventListener("click", () => {
+      sort = option.dataset.sortOption;
+      localStorage.setItem(SORT_KEY, sort);
+      applyView();
+      closeSortMenu();
     });
   });
 
@@ -337,10 +407,19 @@ export function initLibrary() {
 
   document.addEventListener("click", (e) => {
     if (!menu.hasAttribute("hidden") && !menu.contains(e.target)) closeMenu();
+    if (
+      sortMenu &&
+      !sortMenu.hasAttribute("hidden") &&
+      !sortMenu.contains(e.target)
+    )
+      closeSortMenu();
   });
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeMenu();
+    if (e.key === "Escape") {
+      closeMenu();
+      closeSortMenu();
+    }
   });
 
   applyView();

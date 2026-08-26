@@ -9,6 +9,40 @@ import { initCarousels } from "./carouselBtn.js";
 import { ensureSession, initAuthUI } from "./authUI.js";
 import { initSearch, navigateToDetail } from "./search.js";
 import { initLibrary } from "./library.js";
+import { createPlaylist } from "./playlist.js";
+import { isLoggedIn } from "../services/auth.js";
+
+let toastTimer;
+function showToast(message) {
+  const toastEl = document.getElementById("toast");
+  if (!toastEl) return;
+  const msgEl = toastEl.querySelector(".toast__message");
+  if (msgEl) msgEl.textContent = message;
+  toastEl.classList.add("is-visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2500);
+}
+
+function initCreatePlaylist() {
+  const btn = document.querySelector("[data-create-playlist]");
+  if (!btn) return;
+  btn.addEventListener("click", async () => {
+    if (!isLoggedIn()) {
+      location.href = "/login.html?message=Vui lòng đăng nhập.";
+      return;
+    }
+    btn.disabled = true;
+    try {
+      const pl = await createPlaylist();
+      window.dispatchEvent(new Event("library:refresh"));
+      navigateToDetail("playlist", pl.id, pl.name || "My Playlist");
+    } catch (error) {
+      showToast(error.message || "Không thể tạo playlist.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
 
 async function renderTrendingSongs() {
   const grid = document
@@ -110,6 +144,7 @@ await ensureSession();
 initAuthUI();
 initSearch();
 initLibrary();
+initCreatePlaylist();
 
 await renderTrendingSongs();
 await renderPopularArtist();

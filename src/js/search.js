@@ -1,4 +1,6 @@
 import { httpRequest } from "../services/http.js";
+import { getSession } from "../services/auth.js";
+import { enablePlaylistEditing } from "./playlist.js";
 
 const form = document.querySelector(".top-bar__search");
 const input = document.querySelector(".top-bar__search-input");
@@ -312,7 +314,13 @@ async function renderDetail(type, id, fallbackTitle) {
 
     const isFollow = type === "artist" || type === "playlist";
     const isLike = type === "album" || type === "track";
-    const followable = isFollow || isLike;
+    const sessionUser = getSession()?.user;
+    const isOwner =
+      type === "playlist" &&
+      !!entity.user_id &&
+      !!sessionUser?.id &&
+      String(entity.user_id) === String(sessionUser.id);
+    const followable = !isOwner && (isFollow || isLike);
     let following = !!(isFollow ? entity.is_following : entity.is_liked);
 
     const followBtn = followable
@@ -321,20 +329,32 @@ async function renderDetail(type, id, fallbackTitle) {
         : `<button class="detail-heart${following ? " is-active" : ""}" type="button" data-detail-follow aria-label="${following ? "Remove from Liked Songs" : "Save to Liked Songs"}" aria-pressed="${following}"><i class="ph-fill ph-heart text-[24px] leading-none" aria-hidden="true"></i></button>`
       : "";
 
+    const actionsHtml = isOwner
+      ? `<div class="detail-actions mt-4 flex items-center gap-3">
+           <button class="pill-button ${entity.is_public ? "pill-button--ghost" : "pill-button--white"} px-4 py-2 text-sm" type="button" data-playlist-visibility data-is-public="${!!entity.is_public}">${entity.is_public ? "Make private" : "Make public"}</button>
+           <button class="pill-button pill-button--ghost px-4 py-2 text-sm" type="button" data-playlist-edit>
+             <i class="ph-fill ph-pencil text-[14px] leading-none" aria-hidden="true"></i>
+             <span>Edit</span>
+           </button>
+         </div>`
+      : followBtn
+        ? `<div class="detail-actions mt-4 flex items-center gap-3">${followBtn}</div>`
+        : "";
+
     detailView.innerHTML = `
       <button class="detail-back pill-button pill-button--ghost px-3 py-2 text-sm mb-4" data-detail-back>
         <i class="ph-fill ph-arrow-left text-[16px] leading-none" aria-hidden="true"></i>
         <span>Quay lại</span>
       </button>
       <div class="detail-header flex gap-6 p-6 rounded-lg bg-elevated">
-        <img src="${cover || "https://images.pexels.com/photos/1780838/pexels-photo-1780838.jpeg"}" alt="" class="detail-cover w-48 h-48 rounded-md object-cover shrink-0" />
+        <img src="${cover || "https://images.pexels.com/photos/1780838/pexels-photo-1780838.jpeg"}" alt="" class="detail-cover w-48 h-48 rounded-md object-cover shrink-0${isOwner ? " detail-cover--editable" : ""}" ${isOwner ? 'data-playlist-cover' : ""} />
         <div class="min-w-0 flex-1">
           <p class="text-sm font-bold uppercase text-subdued">${type}</p>
-          <h1 class="detail-title mt-2 text-3xl font-extrabold text-white">${escapeHtml(title)}</h1>
+          <h1 class="detail-title mt-2 text-3xl font-extrabold text-white${isOwner ? " detail-title--editable" : ""}" ${isOwner ? 'data-playlist-edit' : ""}>${escapeHtml(title)}</h1>
           ${subtitle ? `<p class="detail-subtitle mt-2 text-sm text-subdued line-clamp-3">${escapeHtml(subtitle)}</p>` : ""}
           ${entity.user_display_name ? `<p class="mt-2 text-sm text-white">By ${escapeHtml(entity.user_display_name)}</p>` : ""}
           ${entity.monthly_listeners ? `<p class="mt-2 text-sm text-subdued">${Number(entity.monthly_listeners).toLocaleString("vi-VN")} monthly listeners</p>` : ""}
-          ${followBtn ? `<div class="detail-actions mt-4 flex items-center gap-3">${followBtn}</div>` : ""}
+          ${actionsHtml}
         </div>
       </div>
       ${tracks.length ? `<div class="detail-tracks mt-6"><h2 class="text-lg font-bold text-white mb-3">Tracks</h2><ul class="flex flex-col gap-1">${tracks.map((t, i) => `<li class="flex items-center gap-3 p-2 rounded hover:bg-elevated text-sm text-white"><span class="w-6 text-subdued">${i + 1}</span><span class="truncate">${escapeHtml(t.title || t.name || "Track")}</span><span class="ml-auto text-subdued">${t.artist_name || ""}</span></li>`).join("")}</ul></div>` : ""}
@@ -342,6 +362,10 @@ async function renderDetail(type, id, fallbackTitle) {
     detailView.querySelector("[data-detail-back]")?.addEventListener("click", () => {
       history.back();
     });
+
+    if (isOwner) {
+      enablePlaylistEditing({ id, entity });
+    }
 
     const followEl = detailView.querySelector("[data-detail-follow]");
     if (followable && followEl) {
