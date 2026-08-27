@@ -4,6 +4,9 @@
     { "source": "/artist/:id", "destination": "/index.html" },
     { "source": "/album/:id", "destination": "/index.html" },
     { "source": "/track/:id", "destination": "/index.html" },
-    { "source": "/section/:id", "destination": "/index.html" }
+    { "source": "/section/:id", "destination": "/index.html" },
+    { "source": "/profile", "destination": "/index.html" },
+    { "source": "/profile.html", "destination": "/index.html" },
+    { "source": "/liked", "destination": "/index.html" }
   ]
 }

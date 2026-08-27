@@ -3,11 +3,11 @@
 @import "@phosphor-icons/web/fill";
 @import "@phosphor-icons/web/bold";
 @import "./components.css";
+@import "./profile.css";
 
 @source "../../index.html";
 @source "../../login.html";
 @source "../../signup.html";
-@source "../../profile.html";
 
 @theme {
   /* ---- Backgrounds (docs/design-system.md §1) ---- */

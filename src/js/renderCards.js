@@ -50,10 +50,16 @@ export function createTrackCard(track) {
   });
   cover.appendChild(img);
 
-  const playLink = document.createElement("a");
+  const playLink = document.createElement("button");
+  playLink.type = "button";
   playLink.className = "media-card__play";
-  bindDetail(playLink, "track", track.id, track.title);
+  playLink.dataset.playTrack = "";
+  playLink.dataset.id = track.id;
+  playLink.dataset.title = track.title;
+  playLink.dataset.type = "track";
   playLink.setAttribute("aria-label", `Play ${track.title}`);
+  // store serialized track for queue building without extra fetch
+  playLink._track = track;
 
   const playIcon = document.createElement("i");
   playIcon.className = "ph-fill ph-play text-[20px] leading-none";
@@ -102,10 +108,15 @@ export function createArtistCard(artist) {
   });
   cover.appendChild(img);
 
-  const playLink = document.createElement("a");
+  const playLink = document.createElement("button");
+  playLink.type = "button";
   playLink.className = "media-card__play";
-  bindDetail(playLink, "artist", artist.id, artist.name);
+  playLink.dataset.playContext = "";
+  playLink.dataset.id = artist.id;
+  playLink.dataset.type = "artist";
+  playLink.dataset.title = artist.name;
   playLink.setAttribute("aria-label", `Play ${artist.name}`);
+  playLink._artist = artist;
 
   const playIcon = document.createElement("i");
   playIcon.className = "ph-fill ph-play text-[20px] leading-none";
@@ -154,10 +165,15 @@ export function createAlbumCard(album) {
   });
   cover.appendChild(img);
 
-  const playLink = document.createElement("a");
+  const playLink = document.createElement("button");
+  playLink.type = "button";
   playLink.className = "media-card__play";
-  bindDetail(playLink, "album", album.id, album.title);
+  playLink.dataset.playContext = "";
+  playLink.dataset.id = album.id;
+  playLink.dataset.type = "album";
+  playLink.dataset.title = album.title;
   playLink.setAttribute("aria-label", `Play ${album.title}`);
+  playLink._album = album;
 
   const playIcon = document.createElement("i");
   playIcon.className = "ph-fill ph-play text-[20px] leading-none";
@@ -206,10 +222,15 @@ export function createPlaylistCard(playlist) {
   });
   cover.appendChild(img);
 
-  const playLink = document.createElement("a");
+  const playLink = document.createElement("button");
+  playLink.type = "button";
   playLink.className = "media-card__play";
-  bindDetail(playLink, "playlist", playlist.id, playlist.name);
+  playLink.dataset.playContext = "";
+  playLink.dataset.id = playlist.id;
+  playLink.dataset.type = "playlist";
+  playLink.dataset.title = playlist.name;
   playLink.setAttribute("aria-label", `Play ${playlist.name}`);
+  playLink._playlist = playlist;
 
   const playIcon = document.createElement("i");
   playIcon.className = "ph-fill ph-play text-[20px] leading-none";

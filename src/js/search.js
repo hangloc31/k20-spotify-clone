@@ -1,6 +1,7 @@
-import { httpRequest } from "../services/http.js";
-import { getSession } from "../services/auth.js";
+import { httpRequest, HttpError } from "../services/http.js";
+import { getSession, isLoggedIn } from "../services/auth.js";
 import { enablePlaylistEditing } from "./playlist.js";
+import { setQueue, normalizeTrack } from "./player.js";
 
 const form = document.querySelector(".top-bar__search");
 const input = document.querySelector(".top-bar__search-input");
@@ -50,7 +51,9 @@ function showHome() {
     detailView.classList.add("hidden");
     detailView.innerHTML = "";
   }
-  history.pushState(null, "", "/");
+  if (location.pathname !== "/" && location.pathname !== "/index.html") {
+    history.pushState(null, "", "/");
+  }
 }
 
 function showDetail() {
@@ -412,6 +415,60 @@ async function renderDetail(type, id, fallbackTitle) {
       enablePlaylistEditing({ id, entity });
     }
 
+    // ---- Player wiring: hero play + track rows + highlight ----
+    const detailTracks = tracks;
+    const detailType = type;
+    const detailId = id;
+    const buildQueue = () => {
+      if (detailType === "track") {
+        const single = normalizeTrack({ ...entity, id: detailId, title, image_url: coverUrl });
+        return [single];
+      }
+      return detailTracks.map((t) => normalizeTrack(t));
+    };
+
+    const heroPlayBtn = detailView.querySelector(".detail-play-btn");
+    if (heroPlayBtn) {
+      const hasQueue = detailType === "track" || detailTracks.length > 0;
+      if (!hasQueue) heroPlayBtn.setAttribute("disabled", "");
+      heroPlayBtn.addEventListener("click", () => {
+        const q = buildQueue();
+        if (!q.length) {
+          showToast("Không có bài hát để phát.");
+          return;
+        }
+        setQueue(q, 0, { type: detailType, id: detailId });
+      });
+    }
+
+    const rowPlayBtns = detailView.querySelectorAll(".detail-track__play-btn");
+    rowPlayBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        const q = buildQueue();
+        if (!q.length) return;
+        const start = detailType === "track" ? 0 : idx;
+        setQueue(q, start, { type: detailType, id: detailId });
+      });
+    });
+
+    // Highlight current playing track
+    const highlightPlaying = (track) => {
+      detailView.querySelectorAll(".detail-track").forEach((row) => row.classList.remove("is-playing"));
+      if (!track?.id) return;
+      const idx = buildQueue().findIndex((t) => String(t.id) === String(track.id));
+      if (idx >= 0) {
+        const row = detailView.querySelector(`[data-track-index="${idx}"]`);
+        if (row) row.classList.add("is-playing");
+      }
+    };
+    const trackChangeHandler = (e) => highlightPlaying(e.detail?.track);
+    window.addEventListener("player:trackchange", trackChangeHandler);
+    // initial highlight if already playing
+    try {
+      const cur = window.__player?.getState?.()?.track;
+      if (cur) highlightPlaying(cur);
+    } catch {}
+
     const followEl = detailView.querySelector("[data-detail-follow]");
     if (followable && followEl) {
       const updateFollowBtn = () => {
@@ -519,6 +576,37 @@ async function renderLikedSongs() {
       </div>` : `<p class="text-subdued mt-8 px-6">No liked songs yet.</p>`}
     `;
 
+    // Player wiring for Liked Songs
+    const likedQueue = tracks.map((t) => normalizeTrack(t));
+    const likedHeroBtn = detailView.querySelector(".detail-play-btn");
+    if (likedHeroBtn) {
+      if (!likedQueue.length) likedHeroBtn.setAttribute("disabled", "");
+      likedHeroBtn.addEventListener("click", () => {
+        if (!likedQueue.length) return;
+        setQueue(likedQueue, 0, { type: "liked", id: "liked" });
+      });
+    }
+    const likedRowBtns = detailView.querySelectorAll(".detail-track__play-btn");
+    likedRowBtns.forEach((btn, idx) => {
+      btn.addEventListener("click", () => {
+        setQueue(likedQueue, idx, { type: "liked", id: "liked" });
+      });
+    });
+    const likedHighlight = (track) => {
+      detailView.querySelectorAll(".detail-track").forEach((row) => row.classList.remove("is-playing"));
+      if (!track?.id) return;
+      const idx = likedQueue.findIndex((t) => String(t.id) === String(track.id));
+      if (idx >= 0) {
+        const row = detailView.querySelectorAll(".detail-track")[idx];
+        if (row) row.classList.add("is-playing");
+      }
+    };
+    window.addEventListener("player:trackchange", (e) => likedHighlight(e.detail?.track));
+    try {
+      const cur = window.__player?.getState?.()?.track;
+      if (cur) likedHighlight(cur);
+    } catch {}
+
     detailView.querySelectorAll("[data-liked-unlike]").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const row = btn.closest("[data-track-id]");
@@ -538,6 +626,74 @@ async function renderLikedSongs() {
       <p class="text-subdued mt-8 px-8">Không thể tải danh sách. ${escapeHtml(error.message || "")}</p>
     `;
   }
+}
+
+function formatJoined(iso) {
+  try {
+    return new Date(iso).toLocaleDateString("vi-VN", {
+      year: "numeric",
+      month: "long",
+    });
+  } catch {
+    return "";
+  }
+}
+
+export async function renderProfile() {
+  if (!isLoggedIn()) {
+    location.href = "/login.html?message=Vui%20l%C3%B2ng%20%C4%91%C4%83ng%20nh%E1%BA%ADp.";
+    return;
+  }
+  showDetail();
+  detailView.innerHTML = `<div class="detail-loading p-8"><p class="text-white">Đang tải hồ sơ...</p></div>`;
+  try {
+    const data = await httpRequest.get("/api/users/me", { auth: true });
+    const user = data.user;
+    const stats = data.stats || {};
+    const name = user.display_name || user.username || user.email || "";
+    const initial = (name.charAt(0) || "?").toUpperCase();
+    const avatarHtml = user.avatar_url
+      ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(name)}" class="h-full w-full object-cover" />`
+      : `<span>${escapeHtml(initial)}</span>`;
+    detailView.innerHTML = `
+      <section class="profile-page__main" style="display:flex; justify-content:center; align-items:flex-start; padding:32px 24px;">
+        <div class="profile-card" aria-labelledby="profile-name">
+          <div class="profile-card__avatar">
+            ${avatarHtml}
+          </div>
+          <h1 id="profile-name" class="profile-card__name">${escapeHtml(name)}</h1>
+          <p class="profile-card__username">${user.username ? `@${escapeHtml(user.username)}` : ""}</p>
+          <p class="profile-card__joined">${user.created_at ? `Đã tham gia ${escapeHtml(formatJoined(user.created_at))}` : ""}</p>
+          <p class="profile-card__email">${escapeHtml(user.email || "")}</p>
+          <dl class="profile-card__stats">
+            <div class="profile-stat">
+              <dt class="profile-stat__value">${escapeHtml(String(stats.playlists ?? 0))}</dt>
+              <dd class="profile-stat__label">Playlists</dd>
+            </div>
+            <div class="profile-stat">
+              <dt class="profile-stat__value">${escapeHtml(String(stats.following ?? 0))}</dt>
+              <dd class="profile-stat__label">Đang theo dõi</dd>
+            </div>
+            <div class="profile-stat">
+              <dt class="profile-stat__value">${escapeHtml(String(stats.plays ?? 0))}</dt>
+              <dd class="profile-stat__label">Lượt nghe</dd>
+            </div>
+          </dl>
+          <a href="/profile.html" class="pill-button pill-button--ghost mt-6 inline-flex px-4 py-2 text-sm">Mở trang hồ sơ đầy đủ</a>
+        </div>
+      </section>
+    `;
+  } catch (error) {
+    const msg = error instanceof HttpError ? error.message : "Không thể tải hồ sơ. Vui lòng thử lại.";
+    detailView.innerHTML = `<p class="text-subdued mt-8 px-8">${escapeHtml(msg)}</p>`;
+  }
+}
+
+export function navigateToProfile() {
+  hideAllDropdowns();
+  if (input) input.blur();
+  history.pushState({ type: "profile" }, "", "/profile");
+  renderProfile();
 }
 
 let toastTimer;
@@ -614,17 +770,52 @@ export function initSearch() {
     }
   });
 
-  // home link resets
-  homeLink?.addEventListener("click", (e) => {
-    // let default navigation happen but also reset view if SPA
+  // home link resets — SPA without reload (keep Audio), like Spotify
+  const logoLink = document.querySelector(".top-bar__logo");
+  const handleHomeNav = (e) => {
+    e.preventDefault();
     hideAllDropdowns();
     input.value = "";
+    const isHome = location.pathname === "/" || location.pathname === "/index.html";
+    const isDetailVisible = detailView && !detailView.hidden;
+    if (isHome && !isDetailVisible) {
+      // already at home: just scroll to top, no pushState/re-render
+      document.querySelector(".app-main")?.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     showHome();
+    document.querySelector(".app-main")?.scrollTo({ top: 0 });
+  };
+  homeLink?.addEventListener("click", handleHomeNav);
+  logoLink?.addEventListener("click", handleHomeNav);
+
+  // SPA profile link — intercept without full reload to keep audio playing
+  document.addEventListener("click", (e) => {
+    if (e.target.closest('a[href*="login.html"], a[href*="signup.html"]')) return;
+    const profileLink = e.target.closest('a[data-profile-link], a[href="/profile"], a[href="profile.html"]');
+    if (profileLink) {
+      // only intercept when we're on index.html SPA (detailView exists)
+      if (detailView && homeContent) {
+        e.preventDefault();
+        navigateToProfile();
+        // close user menu if open
+        const menu = document.querySelector("[data-user-menu]");
+        const toggle = document.querySelector("[data-avatar-toggle]");
+        if (menu && !menu.hasAttribute("hidden")) {
+          menu.setAttribute("hidden", "");
+          toggle?.setAttribute("aria-expanded", "false");
+        }
+      }
+    }
   });
 
   // popstate for detail back
   window.addEventListener("popstate", () => {
     const path = location.pathname;
+    if (path === "/profile") {
+      renderProfile();
+      return;
+    }
     if (path === "/liked") {
       renderLikedSongs();
       return;
@@ -640,7 +831,9 @@ export function initSearch() {
   });
 
   // if direct load with /playlist/:id etc, show detail
-  if (location.pathname === "/liked") {
+  if (location.pathname === "/profile") {
+    renderProfile();
+  } else if (location.pathname === "/liked") {
     renderLikedSongs();
   } else {
     const initialMatch = location.pathname.match(/^\/(playlist|artist|album|track)\/([^/]+)/);

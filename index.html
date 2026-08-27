@@ -114,7 +114,7 @@
                 <p class="user-menu__email" data-user-email></p>
               </div>
               <div class="user-menu__divider"></div>
-              <a href="profile.html" class="user-menu__link">
+              <a href="/profile" data-profile-link class="user-menu__link">
                 <i
                   class="ph-fill ph-user text-[16px] leading-none"
                   aria-hidden="true"
@@ -1214,15 +1214,66 @@
         <!-- Player state (logged in) — hidden by default, toggled when login -->
         <div class="now-playing-bar__player" data-logged-in>
           <div class="now-playing-bar__left">
-            <!-- Album art + track info (to be populated when logged in) -->
+            <div
+              class="flex min-w-0 flex-1 items-center gap-3"
+              data-player-track
+              hidden
+            >
+              <img
+                data-player-cover
+                src=""
+                alt=""
+                class="now-playing-bar__cover h-14 w-14 shrink-0 rounded object-cover"
+                width="56"
+                height="56"
+                hidden
+              />
+              <div class="flex min-w-0 flex-1 flex-col justify-center">
+                <a
+                  data-player-title
+                  href="#"
+                  class="truncate text-[14px] font-normal text-white hover:underline"
+                  data-detail
+                  data-type="track"
+                  ></a
+                >
+                <a
+                  data-player-artist
+                  href="#"
+                  class="truncate text-[11px] text-subdued hover:text-white hover:underline"
+                  data-detail
+                  data-type="artist"
+                  ></a
+                >
+              </div>
+              <button
+                data-player-like
+                class="player-control shrink-0"
+                type="button"
+                aria-label="Save to Liked Songs"
+                aria-pressed="false"
+              >
+                <i
+                  class="ph-fill ph-heart text-[16px] leading-none"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+            <div
+              class="flex min-w-0 flex-col justify-center"
+              data-player-placeholder
+            >
+              <p class="truncate text-sm text-subdued">No track selected</p>
+            </div>
           </div>
           <div class="now-playing-bar__center">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1 sm:gap-2">
               <button
                 class="player-control"
                 type="button"
+                data-player-shuffle
                 aria-label="Enable shuffle"
-                disabled
+                aria-pressed="false"
               >
                 <i
                   class="ph-fill ph-shuffle text-[16px] leading-none"
@@ -1232,8 +1283,8 @@
               <button
                 class="player-control"
                 type="button"
+                data-player-prev
                 aria-label="Previous"
-                disabled
               >
                 <i
                   class="ph-fill ph-skip-back text-[16px] leading-none"
@@ -1243,8 +1294,8 @@
               <button
                 class="player-control player-control--main"
                 type="button"
+                data-player-play
                 aria-label="Play"
-                disabled
               >
                 <i
                   class="ph-fill ph-play text-[20px] leading-none"
@@ -1254,8 +1305,8 @@
               <button
                 class="player-control"
                 type="button"
+                data-player-next
                 aria-label="Next"
-                disabled
               >
                 <i
                   class="ph-fill ph-skip-forward text-[16px] leading-none"
@@ -1263,10 +1314,12 @@
                 ></i>
               </button>
               <button
-                class="player-control"
+                class="player-control player-control--repeat"
                 type="button"
-                aria-label="Disable repeat"
-                disabled
+                data-player-repeat
+                data-repeat="off"
+                aria-label="Enable repeat"
+                aria-pressed="false"
               >
                 <i
                   class="ph-fill ph-repeat text-[16px] leading-none"
@@ -1274,22 +1327,32 @@
                 ></i>
               </button>
             </div>
-            <div class="flex w-full max-w-[280px] items-center gap-2">
-              <span class="text-[11px] text-subdued">-:--</span>
+            <div
+              class="flex w-full max-w-[280px] items-center gap-2 sm:max-w-[400px]"
+            >
+              <span
+                class="min-w-[36px] text-right text-[11px] tabular-nums text-subdued"
+                data-player-current
+                >0:00</span
+              >
               <input
-                class="slider w-full"
+                class="slider slider--progress w-full"
+                data-player-progress
                 type="range"
                 min="0"
                 max="100"
                 value="0"
-                disabled
                 role="slider"
                 aria-valuemin="0"
                 aria-valuemax="100"
                 aria-valuenow="0"
-                aria-label="Change progress"
+                aria-label="Seek"
               />
-              <span class="text-[11px] text-subdued">-:--</span>
+              <span
+                class="min-w-[36px] text-[11px] tabular-nums text-subdued"
+                data-player-duration
+                >0:00</span
+              >
             </div>
           </div>
 
@@ -1297,8 +1360,8 @@
             <button
               class="player-control"
               type="button"
+              data-player-mute
               aria-label="Mute"
-              disabled
             >
               <i
                 class="ph-fill ph-speaker-high text-[16px] leading-none"
@@ -1306,16 +1369,16 @@
               ></i>
             </button>
             <input
-              class="slider hidden w-[90px] sm:block"
+              class="slider slider--volume hidden w-[90px] sm:block"
+              data-player-volume
               type="range"
               min="0"
               max="100"
-              value="100"
-              disabled
+              value="80"
               role="slider"
               aria-valuemin="0"
               aria-valuemax="100"
-              aria-valuenow="100"
+              aria-valuenow="80"
               aria-label="Change volume"
             />
           </div>
@@ -1432,6 +1495,57 @@
         <i class="ph-fill ph-trash text-[16px] leading-none" aria-hidden="true"></i>
         <span>Delete</span>
       </button>
+    </div>
+
+    <!-- ===== Auth required modal (guest play) ===== -->
+    <div
+      id="auth-required-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="auth-required-title"
+      hidden
+    >
+      <div class="modal__backdrop" data-auth-modal-close></div>
+      <div class="modal__dialog auth-modal__dialog text-center">
+        <div
+          class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full"
+          style="background: var(--gradient-signup)"
+          aria-hidden="true"
+        >
+          <i
+            class="ph-fill ph-music-notes text-[28px] leading-none text-white"
+          ></i>
+        </div>
+        <h2 id="auth-required-title" class="modal__title mb-2 text-center">
+          Start listening with a free Spotify account
+        </h2>
+        <p class="mb-6 text-sm leading-relaxed text-subdued">
+          Sign up to get unlimited songs and podcasts with occasional ads. No
+          credit card needed.
+        </p>
+        <div class="flex flex-col gap-3">
+          <a
+            href="/signup.html"
+            class="pill-button pill-button--white w-full justify-center py-3 text-base"
+            data-auth-modal-signup
+            >Sign up free</a
+          >
+          <a
+            href="/login.html"
+            class="pill-button pill-button--ghost w-full justify-center border border-white py-3"
+            style="border-color: rgba(255, 255, 255, 0.2)"
+            >Log in</a
+          >
+          <button
+            class="pill-button w-full justify-center py-2 text-sm text-subdued hover:text-white"
+            type="button"
+            data-auth-modal-close
+          >
+            Not now
+          </button>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="/src/js/main.js"></script>

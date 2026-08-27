@@ -11,6 +11,7 @@ import { initSearch, navigateToDetail } from "./search.js";
 import { initLibrary } from "./library.js";
 import { createPlaylist } from "./playlist.js";
 import { isLoggedIn } from "../services/auth.js";
+import { initPlayer, setQueue, normalizeTrack } from "./player.js";
 
 let toastTimer;
 function showToast(message) {
@@ -142,6 +143,7 @@ async function renderAllPlaylists() {
 
 await ensureSession();
 initAuthUI();
+initPlayer();
 initSearch();
 initLibrary();
 initCreatePlaylist();
@@ -168,6 +170,81 @@ await renderAllPlaylists();
 initCarousels();
 
 document.addEventListener("click", (e) => {
+  // Allow auth pages to navigate normally (fix modal login/signup from detail)
+  if (e.target.closest('a[href*="login.html"], a[href*="signup.html"]')) return;
+  // Card play buttons — highest priority (track queue)
+  const playTrackBtn = e.target.closest("[data-play-track]");
+  if (playTrackBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const track = playTrackBtn._track;
+    if (track) {
+      const grid = playTrackBtn.closest(".card-grid");
+      if (grid) {
+        const allBtns = [...grid.querySelectorAll("[data-play-track]")];
+        const allTracks = allBtns.map((b) => b._track).filter(Boolean).map((t) => normalizeTrack(t));
+        const idx = allBtns.indexOf(playTrackBtn);
+        if (allTracks.length > 1 && idx >= 0) {
+          setQueue(allTracks, idx, { type: "track", id: track.id });
+        } else {
+          setQueue([normalizeTrack(track)], 0, { type: "track", id: track.id });
+        }
+      } else {
+        setQueue([normalizeTrack(track)], 0, { type: "track", id: track.id });
+      }
+    }
+    return;
+  }
+
+  const playContextBtn = e.target.closest("[data-play-context]");
+  if (playContextBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const type = playContextBtn.dataset.type;
+    const id = playContextBtn.dataset.id;
+    if (!type || !id) return;
+    playContextBtn.disabled = true;
+    const endpointMap = {
+      playlist: `/api/playlists/${id}`,
+      artist: `/api/artists/${id}`,
+      album: `/api/albums/${id}`,
+    };
+    const endpoint = endpointMap[type] || `/api/playlists/${id}`;
+    httpRequest
+      .get(endpoint, { auth: true })
+      .then((data) => {
+        const entity = data.playlist || data.artist || data.album || data.data || data;
+        const tracks = entity.tracks || [];
+        if (type === "artist" && !tracks.length && entity.id) {
+          // fallback: fetch artist popular tracks
+          return httpRequest.get(`/api/artists/${id}/tracks/popular`).then((d) => d.tracks || d.data || []).catch(() => []);
+        }
+        return tracks;
+      })
+      .then((tracks) => {
+        if (Array.isArray(tracks) && tracks.length > 0) {
+          const q = tracks.map((t) => normalizeTrack(t));
+          setQueue(q, 0, { type, id });
+        } else if (type === "track") {
+          // single track fallback
+          httpRequest.get(`/api/tracks/${id}`).then((data) => {
+            const t = data.track || data.data || data;
+            if (t?.audio_url || t?.id) setQueue([normalizeTrack(t)], 0, { type, id });
+            else showToast("Không có bài hát để phát.");
+          }).catch(() => showToast("Không thể tải bài hát."));
+        } else {
+          showToast("Không có bài hát để phát.");
+          // also navigate to detail so user can see
+          navigateToDetail(type, id, playContextBtn.dataset.title);
+        }
+      })
+      .catch(() => showToast("Không thể tải danh sách phát."))
+      .finally(() => {
+        playContextBtn.disabled = false;
+      });
+    return;
+  }
+
   const link = e.target.closest("a[data-detail]");
   if (!link) return;
   e.preventDefault();

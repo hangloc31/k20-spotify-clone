@@ -1243,11 +1243,20 @@
     height: var(--spacing-control-sm);
     border-radius: var(--corner-radius-rounded);
     color: var(--color-subdued);
-    transition: color var(--duration-shortest-3) var(--ease-productive);
+    transition:
+      color var(--duration-shortest-3) var(--ease-productive),
+      transform var(--duration-shortest-4) var(--ease-productive);
   }
 
-  .player-control:not(:disabled):hover {
-    color: var(--color-white);
+  .now-playing-bar .player-control:not(:disabled):hover {
+    color: inherit;
+    transform: scale(1.04);
+  }
+
+  .now-playing-bar .player-control--main:not(:disabled):hover {
+    color: var(--color-press);
+    background-color: var(--color-white);
+    transform: scale(1.04);
   }
 
   .player-control:disabled {
@@ -1263,13 +1272,64 @@
     opacity: 0.3;
   }
 
+  .player-control.is-active {
+    color: var(--color-positive);
+  }
+
+  .player-control--repeat.is-active {
+    position: relative;
+  }
+
+  .player-control--repeat.is-repeat-track::after {
+    content: "1";
+    position: absolute;
+    bottom: -2px;
+    right: 2px;
+    font-size: 7px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-positive);
+    background-color: var(--color-positive);
+    color: var(--color-press);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+  }
+
+  .player-control--repeat.is-repeat-track {
+    color: var(--color-positive);
+  }
+
+  .now-playing-bar__cover {
+    border-radius: var(--corner-radius-base);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
   /* ---- Slider (docs/components.md §7) ---- */
   .slider {
+    --progress: 0%;
     appearance: none;
     height: var(--spacing-1);
     border-radius: var(--corner-radius-rounded);
-    background-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(
+      to right,
+      var(--color-white) var(--progress),
+      rgba(255, 255, 255, 0.3) var(--progress)
+    );
     outline-offset: var(--spacing-1);
+    cursor: pointer;
+  }
+
+  .slider:hover {
+    background: linear-gradient(
+      to right,
+      var(--color-positive) var(--progress),
+      rgba(255, 255, 255, 0.3) var(--progress)
+    );
   }
 
   .slider::-webkit-slider-thumb {
@@ -1278,11 +1338,57 @@
     height: var(--spacing-3);
     border-radius: var(--corner-radius-rounded);
     background-color: var(--color-white);
+    opacity: 0;
+    transition: opacity var(--duration-shortest-2) var(--ease-productive);
+  }
+
+  .slider:hover::-webkit-slider-thumb,
+  .slider:active::-webkit-slider-thumb,
+  .slider:focus-visible::-webkit-slider-thumb {
+    opacity: 1;
+  }
+
+  .slider::-moz-range-thumb {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    border: 0;
+    border-radius: var(--corner-radius-rounded);
+    background-color: var(--color-white);
+    opacity: 0;
+    transition: opacity var(--duration-shortest-2) var(--ease-productive);
+  }
+
+  .slider:hover::-moz-range-thumb,
+  .slider:active::-moz-range-thumb,
+  .slider:focus-visible::-moz-range-thumb {
+    opacity: 1;
   }
 
   .slider:disabled {
     opacity: 0.5;
     cursor: default;
+  }
+
+  .detail-track.is-playing {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .detail-track.is-playing .detail-track__title {
+    color: var(--color-positive);
+  }
+
+  .detail-track.is-playing .detail-track__number {
+    color: var(--color-positive);
+  }
+
+  .auth-modal__dialog {
+    max-width: 420px;
+    text-align: center;
+  }
+
+  .auth-modal__dialog .modal__title {
+    margin-bottom: var(--spacing-2);
+    text-align: center;
   }
 
   /* ---- Toast (shared: login + signup) ---- */
