@@ -146,6 +146,21 @@ initSearch();
 initLibrary();
 initCreatePlaylist();
 
+// Scrollbar is-scrolling — hiện thumb khi wheel/trackpad cuộn, 800ms sau ẩn
+const sbEls = document.querySelectorAll(".app-sidebar, .app-main");
+let sbTimer;
+sbEls.forEach((el) => {
+  el.addEventListener(
+    "scroll",
+    () => {
+      el.classList.add("is-scrolling");
+      clearTimeout(sbTimer);
+      sbTimer = setTimeout(() => sbEls.forEach((e) => e.classList.remove("is-scrolling")), 800);
+    },
+    { passive: true },
+  );
+});
+
 await renderTrendingSongs();
 await renderPopularArtist();
 await renderPopularAlbums();
