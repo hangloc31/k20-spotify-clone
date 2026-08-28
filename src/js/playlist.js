@@ -85,10 +85,10 @@ export function enablePlaylistEditing({ id, entity }) {
   let currentCover = entity.image_url || "";
   let pendingFile = null;
 
-  function refreshDom({ name, description, cover }) {
+  function refreshDom({ name, description, cover } = {}) {
     const titleEl = detailView.querySelector(".detail-hero__title");
     const metaEl = detailView.querySelector(".detail-hero__meta");
-    if (titleEl) titleEl.textContent = name;
+    if (name !== undefined && titleEl) titleEl.textContent = name;
     if (description !== undefined && metaEl) {
       const parts = [];
       if (entity.user_display_name) parts.push(`By ${entity.user_display_name}`);
@@ -155,12 +155,16 @@ export function enablePlaylistEditing({ id, entity }) {
     el.addEventListener("click", () => openEditModal()),
   );
 
-  // Make public / Make private
+  // Make public / Make private — only update visibility pill, not title
   visibilityBtn?.addEventListener("click", async () => {
     try {
       isPublic = !isPublic;
       await updatePlaylist(id, { is_public: isPublic });
-      refreshDom({});
+      // don't touch title via refreshDom({}) — inline visibility update only
+      visibilityBtn.textContent = isPublic ? "Make private" : "Make public";
+      visibilityBtn.classList.toggle("pill-button--white", !isPublic);
+      visibilityBtn.classList.toggle("pill-button--ghost", isPublic);
+      visibilityBtn.dataset.isPublic = String(isPublic);
       window.dispatchEvent(new Event("library:refresh"));
       showToast(isPublic ? "Playlist đã công khai." : "Playlist đã chuyển chế độ riêng tư.");
     } catch (error) {
@@ -208,4 +212,61 @@ export function enablePlaylistEditing({ id, entity }) {
 
   cancelBtn?.addEventListener("click", closeEditModal);
   closeBackdrop?.addEventListener("click", closeEditModal);
+
+  // ---- Delete playlist (own only) ----
+  const deleteBtn = detailView.querySelector("[data-playlist-delete]");
+  const deleteModal = document.getElementById("playlist-delete-modal");
+  if (deleteBtn && deleteModal) {
+    const deleteNameEl = deleteModal.querySelector("[data-delete-name]");
+    const deleteCancelBtn = deleteModal.querySelector("[data-delete-cancel]");
+    const deleteConfirmBtn = deleteModal.querySelector("[data-delete-confirm]");
+    const deleteCloseBackdrop = deleteModal.querySelector("[data-delete-close]");
+
+    function openDeleteModal() {
+      if (deleteNameEl) deleteNameEl.textContent = `"${entity.title || entity.name || ""}"`;
+      deleteModal.removeAttribute("hidden");
+    }
+    function closeDeleteModal() {
+      deleteModal.setAttribute("hidden", "");
+    }
+
+    deleteBtn.addEventListener("click", openDeleteModal);
+    deleteCancelBtn?.addEventListener("click", closeDeleteModal);
+    deleteCloseBackdrop?.addEventListener("click", closeDeleteModal);
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === deleteModal) closeDeleteModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !deleteModal.hasAttribute("hidden")) closeDeleteModal();
+    });
+
+    deleteConfirmBtn?.addEventListener("click", async () => {
+      deleteConfirmBtn.disabled = true;
+      try {
+        await httpRequest.delete(`/api/playlists/${id}`, { auth: true });
+        window.dispatchEvent(new Event("library:refresh"));
+        showToast("Đã xóa playlist.");
+        closeDeleteModal();
+        // go home (keep Audio alive)
+        const homeContent = document.querySelector(".app-main__content");
+        const detailViewEl = document.getElementById("detail-view");
+        if (homeContent) {
+          homeContent.hidden = false;
+          homeContent.classList.remove("hidden");
+        }
+        if (detailViewEl) {
+          detailViewEl.hidden = true;
+          detailViewEl.classList.add("hidden");
+          detailViewEl.innerHTML = "";
+        }
+        if (location.pathname !== "/" && location.pathname !== "/index.html") {
+          history.replaceState(null, "", "/");
+        }
+      } catch (error) {
+        showToast(error.message || "Không thể xóa playlist.");
+      } finally {
+        deleteConfirmBtn.disabled = false;
+      }
+    });
+  }
 }

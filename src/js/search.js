@@ -19,6 +19,14 @@ let searchController = null;
 let trendingController = null;
 let debounceTimer = null;
 
+function stripAccent(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d");
+}
+
 function debounce(fn, delay) {
   return (...args) => {
     clearTimeout(debounceTimer);
@@ -43,7 +51,7 @@ function hideAllDropdowns() {
   hide(resultsEl);
 }
 
-function showHome() {
+export function showHome() {
   if (homeContent) homeContent.hidden = false;
   if (homeContent) homeContent.classList.remove("hidden");
   if (detailView) {
@@ -246,6 +254,41 @@ async function fetchTrending() {
   }
 }
 
+async function fetchAccentFallback(qNorm) {
+  try {
+    const [artistsData, tracksData, albumsData, playlistsData] = await Promise.all([
+      httpRequest.get("/api/artists/trending?limit=20"),
+      httpRequest.get("/api/tracks/popular?limit=20"),
+      httpRequest.get("/api/albums/popular?limit=20"),
+      httpRequest.get("/api/playlists?limit=20&offset=0&"),
+    ]);
+    const out = [];
+    for (const a of artistsData.artists || []) {
+      if (stripAccent(a.name).includes(qNorm) || stripAccent(a.bio || "").includes(qNorm)) {
+        out.push({ id: a.id, title: a.name, subtitle: "Artist", image_url: a.image_url, type: "artist" });
+      }
+    }
+    for (const t of tracksData.tracks || []) {
+      if (stripAccent(t.title).includes(qNorm) || stripAccent(t.artist_name || "").includes(qNorm)) {
+        out.push({ id: t.id, title: t.title, subtitle: t.artist_name, image_url: t.image_url, type: "track" });
+      }
+    }
+    for (const al of albumsData.albums || []) {
+      if (stripAccent(al.title).includes(qNorm) || stripAccent(al.artist_name || "").includes(qNorm)) {
+        out.push({ id: al.id, title: al.title, subtitle: al.artist_name, image_url: al.cover_image_url, type: "album" });
+      }
+    }
+    for (const pl of playlistsData.playlists || []) {
+      if (stripAccent(pl.name).includes(qNorm) || stripAccent(pl.description || "").includes(qNorm)) {
+        out.push({ id: pl.id, title: pl.name, subtitle: pl.description || "Playlist", image_url: pl.image_url, type: "playlist" });
+      }
+    }
+    return out.slice(0, 20);
+  } catch {
+    return [];
+  }
+}
+
 async function fetchSearch(q) {
   if (!q) {
     hide(resultsEl);
@@ -258,7 +301,15 @@ async function fetchSearch(q) {
       `/api/search?q=${encodeURIComponent(q)}&type=all&limit=20&offset=0`,
       { signal: searchController.signal }
     );
-    const items = extractSearchItems(data);
+    let items = extractSearchItems(data);
+    // accent-insensitive fallback when BE returns 0 (BE is accent-sensitive, case-insensitive only with accent)
+    if (!items.length) {
+      const qNorm = stripAccent(q);
+      if (qNorm) {
+        const fallback = await fetchAccentFallback(qNorm);
+        if (fallback.length) items = fallback;
+      }
+    }
     renderList(resultsEl, items, `Không có kết quả cho "${q}"`);
     show(resultsEl);
     hide(suggestionsEl);
@@ -337,11 +388,13 @@ async function renderDetail(type, id, fallbackTitle) {
     const actionsHtml = isOwner
       ? `<div class="detail-hero__actions">
            <button class="detail-play-btn" type="button" aria-label="Play"><i class="ph-fill ph-play text-[24px] leading-none" aria-hidden="true"></i></button>
-           <button class="pill-button ${entity.is_public ? "pill-button--ghost" : "pill-button--white"} px-5 py-2 text-sm" type="button" data-playlist-visibility data-is-public="${!!entity.is_public}">${entity.is_public ? "Make private" : "Make public"}</button>
-           <button class="pill-button pill-button--ghost px-5 py-2 text-sm" type="button" data-playlist-edit>
-             <i class="ph-fill ph-pencil text-[14px] leading-none" aria-hidden="true"></i>
-             <span>Edit</span>
+           <button class="detail-action-icon" type="button" data-playlist-edit aria-label="Edit playlist">
+             <i class="ph-fill ph-pencil text-[16px] leading-none" aria-hidden="true"></i>
            </button>
+           <button class="detail-action-icon detail-action-icon--danger" type="button" data-playlist-delete aria-label="Delete playlist">
+             <i class="ph-fill ph-trash text-[16px] leading-none" aria-hidden="true"></i>
+           </button>
+           <button class="pill-button ${entity.is_public ? "pill-button--ghost" : "pill-button--white"} px-5 py-2 text-sm" type="button" data-playlist-visibility data-is-public="${!!entity.is_public}">${entity.is_public ? "Make private" : "Make public"}</button>
          </div>`
       : `<div class="detail-hero__actions">
            <button class="detail-play-btn" type="button" aria-label="Play"><i class="ph-fill ph-play text-[24px] leading-none" aria-hidden="true"></i></button>
@@ -679,7 +732,6 @@ export async function renderProfile() {
               <dd class="profile-stat__label">Lượt nghe</dd>
             </div>
           </dl>
-          <a href="/profile.html" class="pill-button pill-button--ghost mt-6 inline-flex px-4 py-2 text-sm">Mở trang hồ sơ đầy đủ</a>
         </div>
       </section>
     `;

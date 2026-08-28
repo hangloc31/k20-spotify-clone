@@ -32,6 +32,14 @@ function getSavedSort() {
   return VALID_SORTS.includes(saved) ? saved : DEFAULT_SORT;
 }
 
+function stripAccent(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d");
+}
+
 function createCoverFallback() {
   const fallback = document.createElement("div");
   fallback.className = "library-item__cover-fallback";
@@ -274,13 +282,13 @@ export function initLibrary() {
   let searchTerm = "";
 
   function getFilteredItems() {
-    const q = searchTerm.trim().toLowerCase();
+    const q = stripAccent(searchTerm.trim());
     return items.filter((it) => {
       const matchType = filterType === "all" || it.kind === filterType;
       const matchQuery =
         !q ||
-        it.title.toLowerCase().includes(q) ||
-        it.owner.toLowerCase().includes(q);
+        stripAccent(it.title).includes(q) ||
+        stripAccent(it.owner).includes(q);
       return matchType && matchQuery;
     });
   }
@@ -455,6 +463,11 @@ export function initLibrary() {
 
   function showContextMenu(e, dataset) {
     if (!contextMenu || !dataset.id) return;
+    // idempotent: if already open on this item, toggle closed (avoid double/stacked menus)
+    if (!contextMenu.hasAttribute("hidden") && contextTarget && String(contextTarget.id) === String(dataset.id)) {
+      closeContextMenu();
+      return;
+    }
     contextTarget = { id: dataset.id, kind: dataset.kind, isOwn: dataset.isOwn === "true" };
 
     const isArtist = contextTarget.kind === "artist";
@@ -484,12 +497,78 @@ export function initLibrary() {
     contextMenu.style.top = `${Math.max(0, y)}px`;
   }
 
+  let touchLongPress = false;
+  let suppressClick = false;
   list.addEventListener("contextmenu", (e) => {
     const li = e.target.closest(".library-item");
     if (!li) return;
+    if (touchLongPress) {
+      // long-press already handled via touch; ignore native contextmenu (mobile double)
+      touchLongPress = false;
+      return;
+    }
     e.preventDefault();
     showContextMenu(e, li.dataset);
   });
+
+  // Long-press on mobile (like Spotify) — show same context menu as right-click
+  let pressTimer = null;
+  let pressStartX = 0;
+  let pressStartY = 0;
+  list.addEventListener(
+    "touchstart",
+    (e) => {
+      const li = e.target.closest(".library-item");
+      if (!li) return;
+      // menu already open (still holding from previous long-press) — don't re-arm a timer loop
+      if (!contextMenu?.hasAttribute("hidden")) return;
+      const t = e.touches[0];
+      pressStartX = t.clientX;
+      pressStartY = t.clientY;
+      pressTimer = setTimeout(() => {
+        pressTimer = null;
+        touchLongPress = true;
+        suppressClick = true;
+        showContextMenu({ clientX: pressStartX, clientY: pressStartY, preventDefault: () => {} }, li.dataset);
+      }, 550);
+    },
+    { passive: true }
+  );
+  list.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!pressTimer) return;
+      const t = e.touches[0];
+      const dx = t.clientX - pressStartX;
+      const dy = t.clientY - pressStartY;
+      if (Math.hypot(dx, dy) > 10) clearTimeout(pressTimer);
+    },
+    { passive: true }
+  );
+  // block the synthetic click that fires on touchend after long-press (prevent navigate-away "freeze")
+  list.addEventListener("touchend", (e) => {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+    if (touchLongPress && e.cancelable) e.preventDefault();
+  }, { passive: false });
+  list.addEventListener("touchcancel", () => { clearTimeout(pressTimer); pressTimer = null; }, { passive: true });
+  // Clear long-press flag on any tap so a following contextmenu (desktop long-click) works normally
+  list.addEventListener("click", () => { touchLongPress = false; });
+  // one-shot swallow ONLY the synthetic click on a library item after long-press.
+  // Never swallow clicks on the context menu buttons (Remove/Delete must respond).
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (suppressClick) {
+        if (e.target.closest(".library-item") && !e.target.closest(".context-menu")) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        suppressClick = false;
+      }
+    },
+    true
+  );
 
   contextMenu?.querySelectorAll("[data-context-action]").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -523,6 +602,22 @@ export function initLibrary() {
       closeContextMenu();
     }
   });
+
+  // Tap outside the menu on touch closes it (mobile doesn't emit desktop-style click targets reliably)
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      // release right after a long-press is not a tap-outside — keep the menu open
+      if (touchLongPress) {
+        touchLongPress = false;
+        return;
+      }
+      if (!contextMenu?.hasAttribute("hidden") && !contextMenu?.contains(e.target)) {
+        closeContextMenu();
+      }
+    },
+    { passive: true }
+  );
 
   document.addEventListener("scroll", () => closeContextMenu(), true);
 
