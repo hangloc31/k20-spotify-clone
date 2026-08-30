@@ -7,8 +7,8 @@ export function initCarousels() {
 
   sectionGroups.forEach((section) => {
     const grid = section.querySelector(".card-grid");
-    const prevBtn = section.querySelector('.carousel-nav[aria-label="Previous"]');
-    const nextBtn = section.querySelector('.carousel-nav[aria-label="Next"]');
+    const prevBtn = section.querySelector(".carousel-nav--prev");
+    const nextBtn = section.querySelector(".carousel-nav--next");
     if (!grid || !prevBtn || !nextBtn) return;
 
     const updateButtons = () => {

@@ -116,14 +116,29 @@ function createBody(item) {
   return body;
 }
 
+function createLikedCover() {
+  const wrap = document.createElement("div");
+  wrap.className = "library-item__cover library-item__cover--liked";
+  wrap.setAttribute("aria-hidden", "true");
+  const icon = document.createElement("i");
+  icon.className = "ph-fill ph-heart text-[24px] leading-none";
+  icon.setAttribute("aria-hidden", "true");
+  wrap.appendChild(icon);
+  return wrap;
+}
+
 function createLibraryItem(item, view) {
   const li = document.createElement("li");
   li.className = `library-item library-item--${item.kind}`;
+  if (item.likedSongs) li.classList.add("library-item--liked");
+  if (item.pinned) li.classList.add("library-item--pinned");
   if (item.id) {
+    // Liked Songs is a special kind - always expose as "liked" so context-menu guard works
     li.dataset.id = item.id;
-    li.dataset.kind = item.kind;
+    li.dataset.kind = item.likedSongs ? "liked" : item.kind;
     li.dataset.isOwn = String(!!item.isOwn);
     li.dataset.title = item.title;
+    if (item.likedSongs) li.dataset.liked = "true";
   }
 
   const link = document.createElement("a");
@@ -147,9 +162,13 @@ function createLibraryItem(item, view) {
 
   const showCover = view !== "compact-list";
   if (showCover) {
-    li.appendChild(
-      createCover(item.image, `Cover of ${item.title}`, item.round),
-    );
+    if (item.likedSongs) {
+      li.appendChild(createLikedCover());
+    } else {
+      li.appendChild(
+        createCover(item.image, `Ảnh bìa của ${item.title}`, item.round),
+      );
+    }
   }
 
   if (view === "default-list" || view === "default-grid") {
@@ -205,18 +224,37 @@ async function fetchLibraryItems() {
       pushItem({
         id: pl.id,
         kind: "playlist",
-        title: pl.name,
+        title: isLikedSongs ? "Bài hát đã thích" : pl.name,
         type: "Playlist",
         owner: isLikedSongs
-          ? `${likedCount} ${likedCount === 1 ? "song" : "songs"}`
+          ? `${likedCount} bài hát`
           : pl.user_username || pl.owner_name || "",
         ownerEligible: true,
-        image: pl.image_url,
+        image: isLikedSongs ? null : pl.image_url,
         round: false,
         likedSongs: isLikedSongs,
-        isOwn,
+        pinned: isLikedSongs,
+        isOwn: isLikedSongs ? false : isOwn,
       });
     });
+
+  // Ensure Liked Songs always exists (Spotify-like: pinned, never removable)
+  const hasLiked = items.some((it) => it.likedSongs);
+  if (!hasLiked) {
+    pushItem({
+      id: "liked",
+      kind: "playlist",
+      title: "Bài hát đã thích",
+      type: "Playlist",
+      owner: `${likedCount} bài hát`,
+      ownerEligible: true,
+      image: null,
+      round: false,
+      likedSongs: true,
+      pinned: true,
+      isOwn: false,
+    });
+  }
 
   (albums?.albums ?? []).forEach((al) => {
     if (!al?.id || seen.has(al.id)) return;
@@ -241,7 +279,7 @@ async function fetchLibraryItems() {
       id: ar.id,
       kind: "artist",
       title: ar.name,
-      type: "Artist",
+      type: "Nghệ sĩ",
       owner: ar.name,
       ownerEligible: false,
       image: ar.image_url,
@@ -284,7 +322,12 @@ export function initLibrary() {
   function getFilteredItems() {
     const q = stripAccent(searchTerm.trim());
     return items.filter((it) => {
-      const matchType = filterType === "all" || it.kind === filterType;
+      // Liked Songs is a Playlist - visible under All and Playlists, hidden under Artists/Albums (Spotify-like)
+      const isLiked = !!it.likedSongs;
+      const matchType =
+        filterType === "all" ||
+        it.kind === filterType ||
+        (isLiked && filterType === "playlist");
       const matchQuery =
         !q ||
         stripAccent(it.title).includes(q) ||
@@ -294,13 +337,16 @@ export function initLibrary() {
   }
 
   function getSortedItems(filtered) {
+    // Pin Liked Songs at the top regardless of sort (Spotify-like)
+    const pinned = filtered.filter((it) => it.pinned);
+    const rest = filtered.filter((it) => !it.pinned);
+    let sortedRest;
     if (sort === "alpha") {
-      return [...filtered].sort((a, b) =>
+      sortedRest = [...rest].sort((a, b) =>
         a.title.localeCompare(b.title, undefined, { sensitivity: "base" }),
       );
-    }
-    if (sort === "creator") {
-      return [...filtered].sort((a, b) => {
+    } else if (sort === "creator") {
+      sortedRest = [...rest].sort((a, b) => {
         const byOwner = a.owner.localeCompare(b.owner, undefined, {
           sensitivity: "base",
         });
@@ -309,8 +355,10 @@ export function initLibrary() {
           sensitivity: "base",
         });
       });
+    } else {
+      sortedRest = [...rest].sort((a, b) => b.saved_at - a.saved_at);
     }
-    return [...filtered].sort((a, b) => b.saved_at - a.saved_at);
+    return [...pinned, ...sortedRest];
   }
 
   function applyView() {
@@ -331,7 +379,7 @@ export function initLibrary() {
       const empty = document.createElement("li");
       empty.className = "library-item library-item--empty";
       empty.textContent =
-        "Your library is empty — follow artists and save albums to see them here.";
+        "Thư viện của bạn trống — hãy theo dõi nghệ sĩ và lưu album để xem tại đây.";
       list.appendChild(empty);
       return;
     }
@@ -339,7 +387,7 @@ export function initLibrary() {
     if (!visible.length) {
       const empty = document.createElement("li");
       empty.className = "library-item library-item--empty";
-      empty.textContent = `No results found for "${searchTerm.trim()}"`;
+      empty.textContent = `Không tìm thấy kết quả cho "${searchTerm.trim()}"`;
       list.appendChild(empty);
       return;
     }
@@ -463,6 +511,8 @@ export function initLibrary() {
 
   function showContextMenu(e, dataset) {
     if (!contextMenu || !dataset.id) return;
+    // Liked Songs is never removable (Spotify-like) - block context menu entirely
+    if (dataset.liked === "true" || dataset.kind === "liked") return;
     // idempotent: if already open on this item, toggle closed (avoid double/stacked menus)
     if (!contextMenu.hasAttribute("hidden") && contextTarget && String(contextTarget.id) === String(dataset.id)) {
       closeContextMenu();
@@ -473,7 +523,7 @@ export function initLibrary() {
     const isArtist = contextTarget.kind === "artist";
     const isPlaylist = contextTarget.kind === "playlist";
     const isAlbum = contextTarget.kind === "album";
-    const isLikedSongs = !dataset.id || dataset.kind === "liked";
+    const isLikedSongs = !dataset.id || dataset.kind === "liked" || dataset.liked === "true";
 
     if (isLikedSongs) return;
 

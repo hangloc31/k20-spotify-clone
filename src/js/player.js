@@ -63,7 +63,7 @@ function getTrackArtist(track) {
   return track?.artist_name || track?.artist || track?.user_display_name || "";
 }
 
-function showAuthModal() {
+export function showAuthModal() {
   const modal = document.getElementById("auth-required-modal");
   if (!modal) {
     location.href = "/signup.html";
@@ -123,7 +123,9 @@ function updateLikeUI(track) {
   const liked = !!track?.is_liked;
   els.likeBtn.classList.toggle("is-active", liked);
   els.likeBtn.setAttribute("aria-pressed", String(liked));
-  els.likeBtn.setAttribute("aria-label", liked ? "Remove from Liked Songs" : "Save to Liked Songs");
+  const likeLabel = liked ? "Xóa khỏi Bài hát đã thích" : "Lưu vào Bài hát đã thích";
+  els.likeBtn.setAttribute("aria-label", likeLabel);
+  els.likeBtn.dataset.tooltip = likeLabel;
   const icon = els.likeBtn.querySelector("i");
   if (icon) {
     icon.className = liked ? "ph-fill ph-heart text-[16px] leading-none" : "ph-fill ph-heart text-[16px] leading-none";
@@ -214,14 +216,18 @@ function updatePlayButton() {
   if (icon) {
     icon.className = isPlaying ? "ph-fill ph-pause text-[20px] leading-none" : "ph-fill ph-play text-[20px] leading-none";
   }
-  els.playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+  const playLabel = isPlaying ? "Tạm dừng" : "Phát";
+  els.playBtn.setAttribute("aria-label", playLabel);
+  els.playBtn.dataset.tooltip = playLabel;
 }
 
 function updateShuffleUI() {
   if (!els.shuffleBtn) return;
   els.shuffleBtn.classList.toggle("is-active", shuffle);
   els.shuffleBtn.setAttribute("aria-pressed", String(shuffle));
-  els.shuffleBtn.setAttribute("aria-label", shuffle ? "Disable shuffle" : "Enable shuffle");
+  const shuffleLabel = shuffle ? "Tắt trộn bài" : "Bật trộn bài";
+  els.shuffleBtn.setAttribute("aria-label", shuffleLabel);
+  els.shuffleBtn.dataset.tooltip = shuffleLabel;
 }
 
 function updateRepeatUI() {
@@ -230,8 +236,9 @@ function updateRepeatUI() {
   els.repeatBtn.classList.toggle("is-repeat-track", repeat === "track");
   els.repeatBtn.classList.toggle("is-repeat-context", repeat === "context");
   els.repeatBtn.setAttribute("aria-pressed", String(repeat !== "off"));
-  const label = repeat === "off" ? "Enable repeat" : repeat === "track" ? "Disable repeat" : "Enable repeat one";
+  const label = repeat === "off" ? "Bật lặp lại" : repeat === "track" ? "Tắt lặp lại" : "Bật lặp lại một bài";
   els.repeatBtn.setAttribute("aria-label", label);
+  els.repeatBtn.dataset.tooltip = label;
   els.repeatBtn.setAttribute("data-repeat", repeat);
 }
 
@@ -261,7 +268,9 @@ function updateVolumeUI() {
     if (audio.muted || pct === 0) cls = "ph-fill ph-speaker-none text-[16px] leading-none";
     else if (pct < 50) cls = "ph-fill ph-speaker-low text-[16px] leading-none";
     if (icon) icon.className = cls;
-    els.muteBtn.setAttribute("aria-label", audio.muted || pct === 0 ? "Unmute" : "Mute");
+    const muteLabel = audio.muted || pct === 0 ? "Bật tiếng" : "Tắt tiếng";
+    els.muteBtn.setAttribute("aria-label", muteLabel);
+    els.muteBtn.dataset.tooltip = muteLabel;
   }
 }
 
@@ -503,7 +512,7 @@ export function toggleShuffle() {
     shuffleQueue();
   }
   syncBackend("/api/me/player/shuffle", "PUT", { state: shuffle });
-  showToast(shuffle ? "Đã bật phát ngẫu nhiên." : "Đã tắt phát ngẫu nhiên.");
+  showToast(shuffle ? "Đã bật trộn bài." : "Đã tắt trộn bài.");
 }
 
 export function cycleRepeat() {
@@ -535,8 +544,16 @@ async function toggleLike() {
     if (isLiked) await httpRequest.delete(url, { auth: true });
     else await httpRequest.post(url, {}, { auth: true });
     track.is_liked = !isLiked;
+    // sync queue copies
+    queue.forEach((t) => {
+      if (String(t.id) === String(track.id)) t.is_liked = track.is_liked;
+    });
+    originalQueue.forEach((t) => {
+      if (String(t.id) === String(track.id)) t.is_liked = track.is_liked;
+    });
     updateLikeUI(track);
     window.dispatchEvent(new Event("library:refresh"));
+    window.dispatchEvent(new CustomEvent("like:changed", { detail: { id: track.id, type: "track", is_liked: track.is_liked } }));
     showToast(track.is_liked ? "Đã thêm vào Bài hát đã thích." : "Đã xóa khỏi Bài hát đã thích.");
   } catch (e) {
     showToast(e.message || "Không thể cập nhật.");
@@ -822,6 +839,22 @@ export function initPlayer() {
     // if detail view liked state changed, keep queue in sync
     const detailTrack = e.detail?.track;
     if (!detailTrack) return;
+  });
+
+  window.addEventListener("like:changed", (e) => {
+    const { id, is_liked } = e.detail || {};
+    if (!id) return;
+    const cur = queue[currentIndex];
+    if (cur && String(cur.id) === String(id)) {
+      cur.is_liked = !!is_liked;
+      updateLikeUI(cur);
+    }
+    queue.forEach((t) => {
+      if (String(t.id) === String(id)) t.is_liked = !!is_liked;
+    });
+    originalQueue.forEach((t) => {
+      if (String(t.id) === String(id)) t.is_liked = !!is_liked;
+    });
   });
 
   return { audio, getState };

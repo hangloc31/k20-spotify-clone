@@ -46,7 +46,7 @@ export function createTrackCard(track) {
 
   const img = createCoverImage({
     src: track.image_url,
-    alt: `Cover of ${track.title}`,
+    alt: `Ảnh bìa của ${track.title}`,
   });
   cover.appendChild(img);
 
@@ -57,7 +57,7 @@ export function createTrackCard(track) {
   playLink.dataset.id = track.id;
   playLink.dataset.title = track.title;
   playLink.dataset.type = "track";
-  playLink.setAttribute("aria-label", `Play ${track.title}`);
+  playLink.setAttribute("aria-label", `Phát ${track.title}`);
   // store serialized track for queue building without extra fetch
   playLink._track = track;
 
@@ -104,7 +104,7 @@ export function createArtistCard(artist) {
 
   const img = createCoverImage({
     src: artist.image_url,
-    alt: `Cover of ${artist.name}`,
+    alt: `Ảnh bìa của ${artist.name}`,
   });
   cover.appendChild(img);
 
@@ -115,7 +115,7 @@ export function createArtistCard(artist) {
   playLink.dataset.id = artist.id;
   playLink.dataset.type = "artist";
   playLink.dataset.title = artist.name;
-  playLink.setAttribute("aria-label", `Play ${artist.name}`);
+  playLink.setAttribute("aria-label", `Phát ${artist.name}`);
   playLink._artist = artist;
 
   const playIcon = document.createElement("i");
@@ -138,7 +138,7 @@ export function createArtistCard(artist) {
   const subtitle = document.createElement("a");
   subtitle.className = "media-card__subtitle";
   bindDetail(subtitle, "artist", artist.id, artist.name);
-  subtitle.textContent = "Artist";
+  subtitle.textContent = "Nghệ sĩ";
   body.appendChild(subtitle);
 
   li.appendChild(body);
@@ -161,7 +161,7 @@ export function createAlbumCard(album) {
 
   const img = createCoverImage({
     src: album.cover_image_url,
-    alt: `Cover of ${album.title}`,
+    alt: `Ảnh bìa của ${album.title}`,
   });
   cover.appendChild(img);
 
@@ -172,7 +172,7 @@ export function createAlbumCard(album) {
   playLink.dataset.id = album.id;
   playLink.dataset.type = "album";
   playLink.dataset.title = album.title;
-  playLink.setAttribute("aria-label", `Play ${album.title}`);
+  playLink.setAttribute("aria-label", `Phát ${album.title}`);
   playLink._album = album;
 
   const playIcon = document.createElement("i");
@@ -218,7 +218,7 @@ export function createPlaylistCard(playlist) {
 
   const img = createCoverImage({
     src: playlist.image_url,
-    alt: `Cover of ${playlist.name}`,
+    alt: `Ảnh bìa của ${playlist.name}`,
   });
   cover.appendChild(img);
 
@@ -229,7 +229,7 @@ export function createPlaylistCard(playlist) {
   playLink.dataset.id = playlist.id;
   playLink.dataset.type = "playlist";
   playLink.dataset.title = playlist.name;
-  playLink.setAttribute("aria-label", `Play ${playlist.name}`);
+  playLink.setAttribute("aria-label", `Phát ${playlist.name}`);
   playLink._playlist = playlist;
 
   const playIcon = document.createElement("i");

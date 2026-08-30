@@ -11,7 +11,8 @@ import { initSearch, navigateToDetail } from "./search.js";
 import { initLibrary } from "./library.js";
 import { createPlaylist } from "./playlist.js";
 import { isLoggedIn } from "../services/auth.js";
-import { initPlayer, setQueue, normalizeTrack } from "./player.js";
+import { initPlayer, setQueue, normalizeTrack, showAuthModal } from "./player.js";
+import { initTooltips } from "./tooltip.js";
 
 let toastTimer;
 function showToast(message) {
@@ -27,9 +28,10 @@ function showToast(message) {
 function initCreatePlaylist() {
   const btn = document.querySelector("[data-create-playlist]");
   if (!btn) return;
-  btn.addEventListener("click", async () => {
+  btn.addEventListener("click", async (e) => {
     if (!isLoggedIn()) {
-      location.href = "/login.html?message=Vui lòng đăng nhập.";
+      e.preventDefault();
+      showAuthModal();
       return;
     }
     btn.disabled = true;
@@ -42,6 +44,17 @@ function initCreatePlaylist() {
     } finally {
       btn.disabled = false;
     }
+  });
+}
+
+function initLibraryGuestCTA() {
+  if (isLoggedIn()) return;
+  document.querySelectorAll(".library__content .pill-button").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      if (isLoggedIn()) return;
+      e.preventDefault();
+      showAuthModal();
+    });
   });
 }
 
@@ -147,6 +160,8 @@ initPlayer();
 initSearch();
 initLibrary();
 initCreatePlaylist();
+initLibraryGuestCTA();
+initTooltips();
 
 // Scrollbar is-scrolling — hiện thumb khi wheel/trackpad cuộn, 800ms sau ẩn
 const sbEls = document.querySelectorAll(".app-sidebar, .app-main");

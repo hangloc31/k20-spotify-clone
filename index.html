@@ -27,20 +27,22 @@
           <a
             href="/"
             class="top-bar__home is-active"
-            aria-label="Home"
+            aria-label="Trang chủ"
             aria-current="page"
             data-home-link
+            data-tooltip="Trang chủ"
+            data-tooltip-pos="bottom"
           >
             <i
               class="ph-fill ph-house text-[24px] leading-none"
               aria-hidden="true"
             ></i>
           </a>
-          <form class="top-bar__search" role="search" aria-label="Search">
+          <form class="top-bar__search" role="search" aria-label="Tìm kiếm">
             <button
               type="submit"
               class="top-bar__search-icon"
-              aria-label="Search"
+              aria-label="Tìm kiếm"
             >
               <i
                 class="ph-fill ph-magnifying-glass text-[20px] leading-none text-subdued shrink-0"
@@ -50,12 +52,12 @@
             <input
               class="top-bar__search-input"
               type="search"
-              placeholder="What do you want to play?"
-              aria-label="What do you want to play?"
+              placeholder="Bạn muốn nghe gì?"
+              aria-label="Bạn muốn nghe gì?"
               autocomplete="off"
             />
             <span class="top-bar__search-divider" aria-hidden="true"></span>
-            <a href="#" class="top-bar__search-browse" aria-label="Browse">
+            <a href="#" class="top-bar__search-browse" aria-label="Duyệt" data-tooltip="Duyệt" data-tooltip-pos="bottom">
               <i
                 class="ph-fill ph-squares-four text-[20px] leading-none"
                 aria-hidden="true"
@@ -67,14 +69,14 @@
             class="search-dropdown"
             hidden
             role="listbox"
-            aria-label="Trending searches"
+            aria-label="Tìm kiếm thịnh hành"
           ></div>
           <div
             id="search-results"
             class="search-dropdown"
             hidden
             role="listbox"
-            aria-label="Search results"
+            aria-label="Kết quả tìm kiếm"
           ></div>
         </div>
         <div class="top-bar__right">
@@ -82,12 +84,12 @@
             <a
               href="signup.html"
               class="pill-button pill-button--ghost hidden px-3 py-2 text-sm sm:inline-flex"
-              >Sign up</a
+              >Đăng ký</a
             >
             <a
               href="login.html"
               class="pill-button pill-button--white px-8 py-2 text-base"
-              >Log in</a
+              >Đăng nhập</a
             >
           </div>
 
@@ -98,6 +100,8 @@
               aria-haspopup="true"
               aria-expanded="false"
               data-avatar-toggle
+              data-tooltip="Tài khoản"
+              data-tooltip-pos="bottom"
             >
               <img
                 data-avatar-img
@@ -140,22 +144,25 @@
           <div class="library__header flex items-center justify-between px-2">
             <button
               class="flex items-center gap-2 rounded-full px-2 py-2 text-subdued transition-colors duration-200 ease-productive hover:text-white"
-              aria-label="Your Library"
+              aria-label="Thư viện của bạn"
+              data-tooltip="Thư viện của bạn"
+              data-tooltip-pos="bottom"
             >
               <i
                 class="ph-fill ph-books text-[24px] leading-none"
                 aria-hidden="true"
               ></i>
-              <span class="text-[16px] font-bold">Your Library</span>
+              <span class="text-[16px] font-bold">Thư viện của bạn</span>
             </button>
             <div class="flex items-center gap-1">
               <div class="library-view-anchor" data-library-sort-anchor>
                 <button
                   class="library-view-toggle h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
-                  aria-label="Sort by"
+                  aria-label="Sắp xếp theo"
                   aria-haspopup="menu"
                   aria-expanded="false"
                   data-library-sort-toggle
+                  data-tooltip="Sắp xếp theo"
                   hidden
                 >
                   <i
@@ -166,7 +173,7 @@
                 <div
                   class="library-view-menu"
                   role="menu"
-                  aria-label="Sort by"
+                  aria-label="Sắp xếp theo"
                   data-library-sort-menu
                   hidden
                 >
@@ -180,7 +187,7 @@
                       class="ph-fill ph-clock text-[16px] leading-none"
                       aria-hidden="true"
                     ></i>
-                    <span>Recently added</span>
+                    <span>Mới thêm gần đây</span>
                     <i
                       class="ph-bold ph-check library-view-menu__check"
                       aria-hidden="true"
@@ -196,7 +203,7 @@
                       class="ph-fill ph-text-aa text-[16px] leading-none"
                       aria-hidden="true"
                     ></i>
-                    <span>Alphabetical</span>
+                    <span>Theo bảng chữ cái</span>
                     <i
                       class="ph-bold ph-check library-view-menu__check"
                       aria-hidden="true"
@@ -212,7 +219,7 @@
                       class="ph-fill ph-user text-[16px] leading-none"
                       aria-hidden="true"
                     ></i>
-                    <span>Creator</span>
+                    <span>Người tạo</span>
                     <i
                       class="ph-bold ph-check library-view-menu__check"
                       aria-hidden="true"
@@ -223,10 +230,11 @@
               <div class="library-view-anchor" data-library-view-anchor>
               <button
                 class="library-view-toggle h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
-                aria-label="Change view"
+                aria-label="Đổi chế độ xem"
                 aria-haspopup="menu"
                 aria-expanded="false"
                 data-library-view-toggle
+                data-tooltip="Đổi chế độ xem"
                 hidden
               >
                 <i
@@ -237,21 +245,21 @@
               <div
                 class="library-view-menu"
                 role="menu"
-                aria-label="Change view"
-                data-library-view-menu
-                hidden
-              >
-                <button
-                  class="library-view-menu__item"
-                  role="menuitemradio"
-                  aria-checked="false"
-                  data-view-option="compact-list"
+                  aria-label="Đổi chế độ xem"
+                  data-library-view-menu
+                  hidden
                 >
-                  <i
-                    class="ph-fill ph-rows text-[16px] leading-none"
-                    aria-hidden="true"
-                  ></i>
-                  <span>Compact list</span>
+                  <button
+                    class="library-view-menu__item"
+                    role="menuitemradio"
+                    aria-checked="false"
+                    data-view-option="compact-list"
+                  >
+                    <i
+                      class="ph-fill ph-rows text-[16px] leading-none"
+                      aria-hidden="true"
+                    ></i>
+                    <span>Danh sách gọn</span>
                   <i
                     class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
@@ -267,7 +275,7 @@
                     class="ph-fill ph-list-dashes text-[16px] leading-none"
                     aria-hidden="true"
                   ></i>
-                  <span>Default list</span>
+                    <span>Danh sách</span>
                   <i
                     class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
@@ -283,7 +291,7 @@
                     class="ph-fill ph-grid-nine text-[16px] leading-none"
                     aria-hidden="true"
                   ></i>
-                  <span>Compact grid</span>
+                    <span>Lưới gọn</span>
                   <i
                     class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
@@ -299,7 +307,7 @@
                     class="ph-fill ph-squares-four text-[16px] leading-none"
                     aria-hidden="true"
                   ></i>
-                  <span>Default grid</span>
+                    <span>Lưới</span>
                   <i
                     class="ph-bold ph-check library-view-menu__check"
                     aria-hidden="true"
@@ -309,8 +317,10 @@
               </div>
               <button
                 class="flex h-8 w-8 items-center justify-center rounded-full text-subdued transition-colors duration-200 ease-productive hover:text-white"
-                aria-label="Create playlist"
+                aria-label="Tạo playlist"
                 data-create-playlist
+                data-tooltip="Tạo playlist"
+                data-tooltip-pos="bottom"
               >
                 <i
                   class="ph-fill ph-plus text-[16px] leading-none"
@@ -323,6 +333,7 @@
           <div
             class="library-search"
             data-library-search
+            data-tooltip="Tìm trong Thư viện"
             hidden
           >
             <i
@@ -332,8 +343,8 @@
             <input
               type="search"
               class="library-search__input"
-              placeholder="Search in your library"
-              aria-label="Search in your library"
+              placeholder="Tìm trong Thư viện"
+              aria-label="Tìm trong Thư viện"
               autocomplete="off"
               data-library-search-input
             />
@@ -346,7 +357,7 @@
               data-chip="all"
               aria-pressed="true"
             >
-              All
+              Tất cả
             </button>
             <button
               class="library-chip"
@@ -354,7 +365,7 @@
               data-chip="playlist"
               aria-pressed="false"
             >
-              Playlists
+              Playlist
             </button>
             <button
               class="library-chip"
@@ -362,7 +373,7 @@
               data-chip="artist"
               aria-pressed="false"
             >
-              Artists
+              Nghệ sĩ
             </button>
             <button
               class="library-chip"
@@ -370,35 +381,35 @@
               data-chip="album"
               aria-pressed="false"
             >
-              Albums
+              Album
             </button>
           </div>
 
           <div class="library__content mt-2 flex flex-col gap-2 px-2">
             <div class="rounded-lg bg-elevated p-4">
               <p class="text-[16px] font-bold text-white">
-                Create your first playlist
+                Tạo playlist đầu tiên của bạn
               </p>
               <p class="mt-1 text-[14px] leading-snug text-subdued">
-                It's easy, we'll help you
+                Rất dễ dàng, chúng tôi sẽ giúp bạn
               </p>
               <a
                 href="#"
                 class="pill-button pill-button--white mt-4 px-4 py-2 text-sm"
-                >Create playlist</a
+                >Tạo playlist</a
               >
             </div>
             <div class="rounded-lg bg-elevated p-4">
               <p class="text-[16px] font-bold text-white">
-                Let's find some podcasts to follow
+                Cùng tìm podcast để theo dõi
               </p>
               <p class="mt-1 text-[14px] leading-snug text-subdued">
-                We'll keep you updated on new episodes
+                Chúng tôi sẽ cập nhật cho bạn về các tập mới
               </p>
               <a
                 href="#"
                 class="pill-button pill-button--white mt-4 px-4 py-2 text-sm"
-                >Browse podcasts</a
+                >Duyệt podcast</a
               >
             </div>
           </div>
@@ -407,7 +418,7 @@
             class="library__list"
             data-library-list
             hidden
-            aria-label="Your library items"
+            aria-label="Các mục trong Thư viện"
             aria-busy="true"
           >
             <li class="library-item" aria-hidden="true">
@@ -437,27 +448,27 @@
             class="library__links flex flex-wrap gap-x-3 gap-y-2 px-2 py-4 text-[11px] font-normal text-subdued"
           >
             <li>
-              <a href="#" class="hover:text-white hover:underline">Legal</a>
+              <a href="#" class="hover:text-white hover:underline">Pháp lý</a>
             </li>
             <li>
               <a href="#" class="hover:text-white hover:underline"
-                >Safety &amp; Privacy Center</a
+                >Trung tâm An toàn & Bảo mật</a
               >
             </li>
             <li>
               <a href="#" class="hover:text-white hover:underline"
-                >Privacy Policy</a
+                >Chính sách Bảo mật</a
               >
             </li>
             <li>
-              <a href="#" class="hover:text-white hover:underline">Cookies</a>
+              <a href="#" class="hover:text-white hover:underline">Cookie</a>
             </li>
             <li>
-              <a href="#" class="hover:text-white hover:underline">About Ads</a>
+              <a href="#" class="hover:text-white hover:underline">Về Quảng cáo</a>
             </li>
             <li>
               <a href="#" class="hover:text-white hover:underline"
-                >Accessibility</a
+                >Hỗ trợ tiếp cận</a
               >
             </li>
           </ul>
@@ -475,21 +486,20 @@
           <section class="section-group" aria-labelledby="trending-songs">
             <header class="section-group__header">
               <h2 class="section-group__title" id="trending-songs">
-                <a href="/section/0JQ5DB5E8N831KzFzsBBQ2">Trending songs</a>
+                <a href="/section/0JQ5DB5E8N831KzFzsBBQ2">Bài hát thịnh hành</a>
               </h2>
               <div class="section-group__controls">
                 <a
                   href="/section/0JQ5DB5E8N831KzFzsBBQ2"
                   class="section-group__show-all"
-                  >Show all</a
+                  >Xem tất cả</a
                 >
               </div>
             </header>
             <div class="card-carousel">
-              <button
-                class="carousel-nav"
+              <button class="carousel-nav carousel-nav--prev"
                 type="button"
-                aria-label="Previous"
+                aria-label="Trước"
                 disabled
               >
                 <i
@@ -499,7 +509,7 @@
               </button>
               <ul
                 class="card-grid"
-                aria-label="Trending songs"
+                aria-label="Bài hát thịnh hành"
                 aria-busy="true"
               >
                 <li class="media-card" aria-hidden="true">
@@ -559,7 +569,7 @@
                   </div>
                 </li>
               </ul>
-              <button class="carousel-nav" type="button" aria-label="Next">
+              <button class="carousel-nav carousel-nav--next" type="button" aria-label="Tiếp theo">
                 <i
                   class="ph-fill ph-caret-right text-[16px] leading-none"
                   aria-hidden="true"
@@ -572,21 +582,20 @@
           <section class="section-group" aria-labelledby="popular-artists">
             <header class="section-group__header">
               <h2 class="section-group__title" id="popular-artists">
-                <a href="/section/0JQ5DAnM3wGh0gz1MXnu3C">Popular artists</a>
+                <a href="/section/0JQ5DAnM3wGh0gz1MXnu3C">Nghệ sĩ nổi bật</a>
               </h2>
               <div class="section-group__controls">
                 <a
                   href="/section/0JQ5DAnM3wGh0gz1MXnu3C"
                   class="section-group__show-all"
-                  >Show all</a
+                  >Xem tất cả</a
                 >
               </div>
             </header>
             <div class="card-carousel">
-              <button
-                class="carousel-nav"
+              <button class="carousel-nav carousel-nav--prev"
                 type="button"
-                aria-label="Previous"
+                aria-label="Trước"
                 disabled
               >
                 <i
@@ -597,7 +606,7 @@
 
               <ul
                 class="card-grid"
-                aria-label="Popular artists"
+                aria-label="Nghệ sĩ nổi bật"
                 aria-busy="true"
               >
                 <li class="media-card" aria-hidden="true">
@@ -673,7 +682,7 @@
                   </div>
                 </li>
               </ul>
-              <button class="carousel-nav" type="button" aria-label="Next">
+              <button class="carousel-nav carousel-nav--next" type="button" aria-label="Tiếp theo">
                 <i
                   class="ph-fill ph-caret-right text-[16px] leading-none"
                   aria-hidden="true"
@@ -687,22 +696,21 @@
             <header class="section-group__header">
               <h2 class="section-group__title" id="popular-albums">
                 <a href="/section/0JQ5DAnM3wGh0gz1MXnu3B"
-                  >Popular albums and singles</a
+                  >Album và đĩa đơn nổi bật</a
                 >
               </h2>
               <div class="section-group__controls">
                 <a
                   href="/section/0JQ5DAnM3wGh0gz1MXnu3B"
                   class="section-group__show-all"
-                  >Show all</a
+                  >Xem tất cả</a
                 >
               </div>
             </header>
             <div class="card-carousel">
-              <button
-                class="carousel-nav"
+              <button class="carousel-nav carousel-nav--prev"
                 type="button"
-                aria-label="Previous"
+                aria-label="Trước"
                 disabled
               >
                 <i
@@ -712,7 +720,7 @@
               </button>
               <ul
                 class="card-grid"
-                aria-label="Popular albums"
+                aria-label="Bài hát thịnh hành"
                 aria-busy="true"
               >
                 <li class="media-card" aria-hidden="true">
@@ -772,7 +780,7 @@
                   </div>
                 </li>
               </ul>
-              <button class="carousel-nav" type="button" aria-label="Next">
+              <button class="carousel-nav carousel-nav--next" type="button" aria-label="Tiếp theo">
                 <i
                   class="ph-fill ph-caret-right text-[16px] leading-none"
                   aria-hidden="true"
@@ -785,21 +793,20 @@
           <section class="section-group" aria-labelledby="all-playlists">
             <header class="section-group__header">
               <h2 class="section-group__title" id="all-playlists">
-                <a href="/section/0JQ5DAnM3wGh0gz1MXnu4h">All playlists</a>
+                <a href="/section/0JQ5DAnM3wGh0gz1MXnu4h">Tất cả playlist</a>
               </h2>
               <div class="section-group__controls">
                 <a
                   href="/section/0JQ5DAnM3wGh0gz1MXnu4h"
                   class="section-group__show-all"
-                  >Show all</a
+                  >Xem tất cả</a
                 >
               </div>
             </header>
             <div class="card-carousel">
-              <button
-                class="carousel-nav"
+              <button class="carousel-nav carousel-nav--prev"
                 type="button"
-                aria-label="Previous"
+                aria-label="Trước"
                 disabled
               >
                 <i
@@ -807,7 +814,7 @@
                   aria-hidden="true"
                 ></i>
               </button>
-              <ul class="card-grid" aria-label="All Playlists" aria-busy="true">
+              <ul class="card-grid"                 aria-label="Tất cả playlist" aria-busy="true">
                 <li class="media-card" aria-hidden="true">
                   <div class="media-card__cover skeleton"></div>
                   <div class="media-card__body">
@@ -865,204 +872,7 @@
                   </div>
                 </li>
               </ul>
-              <button class="carousel-nav" type="button" aria-label="Next">
-                <i
-                  class="ph-fill ph-caret-right text-[16px] leading-none"
-                  aria-hidden="true"
-                ></i>
-              </button>
-            </div>
-          </section>
-
-          <!-- ===== Featured Charts ===== -->
-          <section class="section-group" aria-labelledby="featured-charts">
-            <header class="section-group__header">
-              <h2 class="section-group__title" id="featured-charts">
-                <a href="/section/0JQ5DAzQHECxDlYNI6xD1g">Featured Charts</a>
-              </h2>
-              <div class="section-group__controls">
-                <a
-                  href="/section/0JQ5DAzQHECxDlYNI6xD1g"
-                  class="section-group__show-all"
-                  >Show all</a
-                >
-              </div>
-            </header>
-            <div class="card-carousel">
-              <button
-                class="carousel-nav"
-                type="button"
-                aria-label="Previous"
-                disabled
-              >
-                <i
-                  class="ph-fill ph-caret-left text-[16px] leading-none"
-                  aria-hidden="true"
-                ></i>
-              </button>
-              <ul class="card-grid" aria-label="Featured Charts">
-                <li class="media-card">
-                  <a
-                    class="media-card__link"
-                    href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
-                    aria-label="Top Songs - Global"
-                  ></a>
-
-                  <div class="media-card__cover">
-                    <img
-                      src="https://charts-images.scdn.co/assets/locale_en/regional/weekly/region_global_default.jpg"
-                      alt="Cover of Top Songs - Global"
-                      loading="lazy"
-                      width="178"
-                      height="178"
-                    />
-                    <a
-                      class="media-card__play"
-                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
-                      aria-label="Play Top Songs - Global"
-                    >
-                      <i
-                        class="ph-fill ph-play text-[20px] leading-none"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                  </div>
-                  <div class="media-card__body">
-                    <a
-                      class="media-card__title"
-                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
-                      >Top Songs - Global</a
-                    >
-                    <a
-                      class="media-card__subtitle"
-                      href="/playlist/37i9dQZEVXbNG2KDcFcKOF"
-                      >Your weekly update of the most played tracks right now -
-                      Global.</a
-                    >
-                  </div>
-                </li>
-                <li class="media-card">
-                  <a
-                    class="media-card__link"
-                    href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
-                    aria-label="Top Songs - Vietnam"
-                  ></a>
-
-                  <div class="media-card__cover">
-                    <img
-                      src="https://charts-images.scdn.co/assets/locale_en/regional/weekly/region_vn_default.jpg"
-                      alt="Cover of Top Songs - Vietnam"
-                      loading="lazy"
-                      width="178"
-                      height="178"
-                    />
-                    <a
-                      class="media-card__play"
-                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
-                      aria-label="Play Top Songs - Vietnam"
-                    >
-                      <i
-                        class="ph-fill ph-play text-[20px] leading-none"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                  </div>
-                  <div class="media-card__body">
-                    <a
-                      class="media-card__title"
-                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
-                      >Top Songs - Vietnam</a
-                    >
-                    <a
-                      class="media-card__subtitle"
-                      href="/playlist/37i9dQZEVXbKZyn1mKjmIl"
-                      >Your weekly update of the most played tracks right now -
-                      Vietnam.</a
-                    >
-                  </div>
-                </li>
-                <li class="media-card">
-                  <a
-                    class="media-card__link"
-                    href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
-                    aria-label="Top 50 - Global"
-                  ></a>
-
-                  <div class="media-card__cover">
-                    <img
-                      src="https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_default.jpg"
-                      alt="Cover of Top 50 - Global"
-                      loading="lazy"
-                      width="178"
-                      height="178"
-                    />
-                    <a
-                      class="media-card__play"
-                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
-                      aria-label="Play Top 50 - Global"
-                    >
-                      <i
-                        class="ph-fill ph-play text-[20px] leading-none"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                  </div>
-                  <div class="media-card__body">
-                    <a
-                      class="media-card__title"
-                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
-                      >Top 50 - Global</a
-                    >
-                    <a
-                      class="media-card__subtitle"
-                      href="/playlist/37i9dQZEVXbMDoHDwVN2tF"
-                      >Your daily update of the most played tracks right now -
-                      Global.</a
-                    >
-                  </div>
-                </li>
-                <li class="media-card">
-                  <a
-                    class="media-card__link"
-                    href="/playlist/37i9dQZEVXbLdGSmz6xilI"
-                    aria-label="Top 50 - Vietnam"
-                  ></a>
-
-                  <div class="media-card__cover">
-                    <img
-                      src="https://charts-images.scdn.co/assets/locale_en/regional/daily/region_vn_default.jpg"
-                      alt="Cover of Top 50 - Vietnam"
-                      loading="lazy"
-                      width="178"
-                      height="178"
-                    />
-                    <a
-                      class="media-card__play"
-                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
-                      aria-label="Play Top 50 - Vietnam"
-                    >
-                      <i
-                        class="ph-fill ph-play text-[20px] leading-none"
-                        aria-hidden="true"
-                      ></i>
-                    </a>
-                  </div>
-                  <div class="media-card__body">
-                    <a
-                      class="media-card__title"
-                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
-                      >Top 50 - Vietnam</a
-                    >
-                    <a
-                      class="media-card__subtitle"
-                      href="/playlist/37i9dQZEVXbLdGSmz6xilI"
-                      >Your daily update of the most played tracks right now -
-                      Vietnam.</a
-                    >
-                  </div>
-                </li>
-              </ul>
-              <button class="carousel-nav" type="button" aria-label="Next">
+              <button class="carousel-nav carousel-nav--next" type="button" aria-label="Tiếp theo">
                 <i
                   class="ph-fill ph-caret-right text-[16px] leading-none"
                   aria-hidden="true"
@@ -1074,72 +884,72 @@
           <!-- ===== Footer ===== -->
           <footer class="app-footer">
             <div class="app-footer__top">
-              <nav class="app-footer__links" aria-label="Footer">
+              <nav class="app-footer__links" aria-label="Chân trang">
                 <div class="app-footer__col">
-                  <h4 class="app-footer__col-title">Company</h4>
+                  <h4 class="app-footer__col-title">Công ty</h4>
                   <ul class="app-footer__col-list">
                     <li>
                       <a href="https://www.spotify.com/vn-vi/about-us/contact/"
-                        >About</a
+                        >Giới thiệu</a
                       >
                     </li>
-                    <li><a href="https://www.lifeatspotify.com/">Jobs</a></li>
+                    <li><a href="https://www.lifeatspotify.com/">Việc làm</a></li>
                     <li>
-                      <a href="https://newsroom.spotify.com/">For the Record</a>
+                      <a href="https://newsroom.spotify.com/">Tin tức</a>
                     </li>
                   </ul>
                 </div>
                 <div class="app-footer__col">
-                  <h4 class="app-footer__col-title">Communities</h4>
+                  <h4 class="app-footer__col-title">Cộng đồng</h4>
                   <ul class="app-footer__col-list">
                     <li>
-                      <a href="https://artists.spotify.com/">For Artists</a>
+                      <a href="https://artists.spotify.com/">Dành cho Nghệ sĩ</a>
                     </li>
                     <li>
-                      <a href="https://developer.spotify.com/">Developers</a>
+                      <a href="https://developer.spotify.com/">Nhà phát triển</a>
                     </li>
-                    <li><a href="https://ads.spotify.com/">Advertising</a></li>
+                    <li><a href="https://ads.spotify.com/">Quảng cáo</a></li>
                     <li>
-                      <a href="https://investors.spotify.com/">Investors</a>
+                      <a href="https://investors.spotify.com/">Nhà đầu tư</a>
                     </li>
                     <li>
-                      <a href="https://spotifyforvendors.com/">Vendors</a>
+                      <a href="https://spotifyforvendors.com/">Nhà cung cấp</a>
                     </li>
                   </ul>
                 </div>
                 <div class="app-footer__col">
-                  <h4 class="app-footer__col-title">Useful links</h4>
+                  <h4 class="app-footer__col-title">Liên kết hữu ích</h4>
                   <ul class="app-footer__col-list">
-                    <li><a href="https://support.spotify.com/">Support</a></li>
+                    <li><a href="https://support.spotify.com/">Hỗ trợ</a></li>
                     <li>
                       <a href="https://www.spotify.com/vn-vi/free/"
-                        >Free Mobile App</a
+                        >Ứng dụng di động miễn phí</a
                       >
                     </li>
-                    <li><a href="/popular-in/vn">Popular by Country</a></li>
+                    <li><a href="/popular-in/vn">Phổ biến theo Quốc gia</a></li>
                     <li>
                       <a href="https://www.spotify.com/vn-vi/import-music/"
-                        >Import your music</a
+                        >Nhập nhạc của bạn</a
                       >
                     </li>
                   </ul>
                 </div>
                 <div class="app-footer__col">
-                  <h4 class="app-footer__col-title">Spotify Plans</h4>
+                  <h4 class="app-footer__col-title">Gói Spotify</h4>
                   <ul class="app-footer__col-list">
                     <li>
                       <a href="https://www.spotify.com/vn-vi/premium/#plans"
-                        >Premium Individual</a
+                        >Premium Cá nhân</a
                       >
                     </li>
                     <li>
                       <a href="https://www.spotify.com/vn-vi/student/"
-                        >Premium Student</a
+                        >Premium Sinh viên</a
                       >
                     </li>
                     <li>
                       <a href="https://www.spotify.com/vn-vi/free/"
-                        >Spotify Free</a
+                        >Spotify Miễn phí</a
                       >
                     </li>
                   </ul>
@@ -1190,23 +1000,22 @@
       </main>
 
       <!-- ===== Now Playing Bar (full width) ===== -->
-      <aside class="now-playing-bar app-player" aria-label="Now playing bar">
+      <aside class="now-playing-bar app-player" aria-label="Thanh phát nhạc">
         <!-- Sign-up state (logged out) — visible by default -->
         <div class="now-playing-bar__signup" data-logged-out>
           <div class="now-playing-bar__left">
             <div class="flex min-w-0 flex-col justify-center">
               <p class="truncate text-[14px] font-bold text-white">
-                Preview of Spotify
+                Xem trước Spotify
               </p>
               <p class="truncate text-[16px] font-normal text-white">
-                Sign up to get unlimited songs and podcasts with occasional ads.
-                No credit card needed.
+                Đăng ký để nghe nhạc và podcast không giới hạn với quảng cáo thỉnh thoảng. Không cần thẻ tín dụng.
               </p>
             </div>
             <a
               href="signup.html"
               class="pill-button pill-button--white hidden h-12 shrink-0 px-6 text-base sm:inline-flex"
-              >Sign up free</a
+              >Đăng ký miễn phí</a
             >
           </div>
         </div>
@@ -1250,8 +1059,9 @@
                 data-player-like
                 class="player-control shrink-0"
                 type="button"
-                aria-label="Save to Liked Songs"
+                aria-label="Lưu vào Bài hát đã thích"
                 aria-pressed="false"
+                data-tooltip="Lưu vào Bài hát đã thích"
               >
                 <i
                   class="ph-fill ph-heart text-[16px] leading-none"
@@ -1263,7 +1073,7 @@
               class="flex min-w-0 flex-col justify-center"
               data-player-placeholder
             >
-              <p class="truncate text-sm text-subdued">No track selected</p>
+              <p class="truncate text-sm text-subdued">Chưa chọn bài hát</p>
             </div>
           </div>
           <div class="now-playing-bar__center">
@@ -1272,8 +1082,9 @@
                 class="player-control"
                 type="button"
                 data-player-shuffle
-                aria-label="Enable shuffle"
+                aria-label="Bật trộn bài"
                 aria-pressed="false"
+                data-tooltip="Bật trộn bài"
               >
                 <i
                   class="ph-fill ph-shuffle text-[16px] leading-none"
@@ -1284,7 +1095,8 @@
                 class="player-control"
                 type="button"
                 data-player-prev
-                aria-label="Previous"
+                aria-label="Bài trước"
+                data-tooltip="Bài trước"
               >
                 <i
                   class="ph-fill ph-skip-back text-[16px] leading-none"
@@ -1295,7 +1107,8 @@
                 class="player-control player-control--main"
                 type="button"
                 data-player-play
-                aria-label="Play"
+                aria-label="Phát"
+                data-tooltip="Phát"
               >
                 <i
                   class="ph-fill ph-play text-[20px] leading-none"
@@ -1306,7 +1119,8 @@
                 class="player-control"
                 type="button"
                 data-player-next
-                aria-label="Next"
+                aria-label="Bài tiếp theo"
+                data-tooltip="Bài tiếp theo"
               >
                 <i
                   class="ph-fill ph-skip-forward text-[16px] leading-none"
@@ -1318,8 +1132,9 @@
                 type="button"
                 data-player-repeat
                 data-repeat="off"
-                aria-label="Enable repeat"
+                aria-label="Bật lặp lại"
                 aria-pressed="false"
+                data-tooltip="Bật lặp lại"
               >
                 <i
                   class="ph-fill ph-repeat text-[16px] leading-none"
@@ -1346,7 +1161,7 @@
                 aria-valuemin="0"
                 aria-valuemax="100"
                 aria-valuenow="0"
-                aria-label="Seek"
+                aria-label="Tua"
               />
               <span
                 class="min-w-[36px] text-[11px] tabular-nums text-subdued"
@@ -1357,12 +1172,13 @@
           </div>
 
           <div class="now-playing-bar__right">
-            <button
-              class="player-control"
-              type="button"
-              data-player-mute
-              aria-label="Mute"
-            >
+              <button
+                class="player-control"
+                type="button"
+                data-player-mute
+                aria-label="Tắt tiếng"
+                data-tooltip="Tắt tiếng"
+              >
               <i
                 class="ph-fill ph-speaker-high text-[16px] leading-none"
                 aria-hidden="true"
@@ -1379,7 +1195,7 @@
               aria-valuemin="0"
               aria-valuemax="100"
               aria-valuenow="80"
-              aria-label="Change volume"
+              aria-label="Thay đổi âm lượng"
             />
           </div>
         </div>
@@ -1405,12 +1221,12 @@
     >
       <div class="modal__backdrop" data-playlist-edit-close></div>
       <div class="modal__dialog">
-        <h2 id="playlist-edit-title" class="modal__title">Edit details</h2>
+        <h2 id="playlist-edit-title" class="modal__title">Chỉnh sửa chi tiết</h2>
         <div class="modal__cover">
           <img
             class="modal__cover-img"
             data-playlist-edit-preview
-            alt="Playlist cover preview"
+            alt="Xem trước ảnh bìa playlist"
           />
           <button
             class="modal__cover-choose"
@@ -1421,7 +1237,7 @@
               class="ph-fill ph-image text-[20px] leading-none"
               aria-hidden="true"
             ></i>
-            Choose image
+            Chọn ảnh
           </button>
           <input
             class="modal__file-input"
@@ -1432,7 +1248,7 @@
           />
         </div>
         <div class="modal__field">
-          <label for="playlist-edit-name">Name</label>
+          <label for="playlist-edit-name">Tên</label>
           <input
             id="playlist-edit-name"
             type="text"
@@ -1442,7 +1258,7 @@
           />
         </div>
         <div class="modal__field">
-          <label for="playlist-edit-desc">Description</label>
+          <label for="playlist-edit-desc">Mô tả</label>
           <textarea
             id="playlist-edit-desc"
             class="modal__input modal__textarea"
@@ -1481,11 +1297,11 @@
       <div class="modal__backdrop" data-delete-close></div>
       <div class="modal__dialog" style="max-width: 400px; text-align: center">
         <h2 id="playlist-delete-title" class="modal__title" style="margin-bottom: 12px">
-          Delete playlist?
+          Xóa playlist?
         </h2>
         <p class="text-sm text-subdued" style="margin-bottom: 24px">
-          Are you sure you want to delete
-          <span class="text-white font-bold" data-delete-name></span>? This can't be undone.
+          Bạn có chắc muốn xóa
+          <span class="text-white font-bold" data-delete-name></span>? Hành động này không thể hoàn tác.
         </p>
         <div class="modal__actions" style="justify-content: center">
           <button
@@ -1515,7 +1331,7 @@
         data-context-action="unfollow"
       >
         <i class="ph-fill ph-heart-slash text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Unfollow</span>
+        <span>Bỏ theo dõi</span>
       </button>
       <button
         class="context-menu__item"
@@ -1523,7 +1339,7 @@
         data-context-action="remove"
       >
         <i class="ph-fill ph-x-circle text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Remove from Your Library</span>
+        <span>Xóa khỏi Thư viện</span>
       </button>
       <button
         class="context-menu__item context-menu__item--danger"
@@ -1531,7 +1347,7 @@
         data-context-action="delete"
       >
         <i class="ph-fill ph-trash text-[16px] leading-none" aria-hidden="true"></i>
-        <span>Delete</span>
+        <span>Xóa</span>
       </button>
     </div>
 
@@ -1556,24 +1372,23 @@
           ></i>
         </div>
         <h2 id="auth-required-title" class="modal__title mb-2 text-center">
-          Start listening with a free Spotify account
+          Bắt đầu nghe với tài khoản Spotify miễn phí
         </h2>
         <p class="mb-6 text-sm leading-relaxed text-subdued">
-          Sign up to get unlimited songs and podcasts with occasional ads. No
-          credit card needed.
+          Đăng ký để nghe nhạc và podcast không giới hạn với quảng cáo thỉnh thoảng. Không cần thẻ tín dụng.
         </p>
         <div class="flex flex-col gap-3">
           <a
             href="/signup.html"
             class="pill-button pill-button--white w-full justify-center py-3 text-base"
             data-auth-modal-signup
-            >Sign up free</a
+            >Đăng ký miễn phí</a
           >
           <a
             href="/login.html"
             class="pill-button pill-button--ghost w-full justify-center border border-white py-3"
             style="border-color: rgba(255, 255, 255, 0.2)"
-            >Log in</a
+            >Đăng nhập</a
           >
           <button
             class="pill-button w-full justify-center py-2 text-sm text-subdued hover:text-white"

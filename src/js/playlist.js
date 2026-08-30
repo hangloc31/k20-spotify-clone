@@ -39,7 +39,7 @@ function extractPath(data) {
 export async function createPlaylist() {
   const data = await httpRequest.post(
     "/api/playlists",
-    { name: "My Playlist", description: "", is_public: true, image_url: "" },
+    { name: "Playlist của tôi", description: "", is_public: true, image_url: "" },
     { auth: true },
   );
   const pl = data?.playlist || data?.data || data;
@@ -91,7 +91,7 @@ export function enablePlaylistEditing({ id, entity }) {
     if (name !== undefined && titleEl) titleEl.textContent = name;
     if (description !== undefined && metaEl) {
       const parts = [];
-      if (entity.user_display_name) parts.push(`By ${entity.user_display_name}`);
+      if (entity.user_display_name) parts.push(`Bởi ${entity.user_display_name}`);
       if (description) parts.push(description);
       metaEl.textContent = parts.join(" · ");
     }
@@ -102,7 +102,7 @@ export function enablePlaylistEditing({ id, entity }) {
       if (bg) bg.style.backgroundImage = `url('${resolveUrl(cover)}')`;
     }
     if (visibilityBtn) {
-      visibilityBtn.textContent = isPublic ? "Make private" : "Make public";
+      visibilityBtn.textContent = isPublic ? "Đặt riêng tư" : "Đặt công khai";
       visibilityBtn.classList.toggle("pill-button--white", !isPublic);
       visibilityBtn.classList.toggle("pill-button--ghost", isPublic);
       visibilityBtn.dataset.isPublic = String(isPublic);
@@ -161,7 +161,7 @@ export function enablePlaylistEditing({ id, entity }) {
       isPublic = !isPublic;
       await updatePlaylist(id, { is_public: isPublic });
       // don't touch title via refreshDom({}) — inline visibility update only
-      visibilityBtn.textContent = isPublic ? "Make private" : "Make public";
+      visibilityBtn.textContent = isPublic ? "Đặt riêng tư" : "Đặt công khai";
       visibilityBtn.classList.toggle("pill-button--white", !isPublic);
       visibilityBtn.classList.toggle("pill-button--ghost", isPublic);
       visibilityBtn.dataset.isPublic = String(isPublic);
