@@ -150,13 +150,12 @@ function createLibraryItem(item, view) {
     link.dataset.type = "liked";
     link.dataset.title = item.title;
     link.href = "/liked";
-  } else if (item.id && item.type) {
-    const type = item.type.toLowerCase();
+  } else if (item.id && item.kind) {
     link.dataset.detail = "";
-    link.dataset.type = type;
+    link.dataset.type = item.kind;
     link.dataset.id = item.id;
     link.dataset.title = item.title;
-    link.href = `/${type}/${item.id}`;
+    link.href = `/${item.kind}/${item.id}`;
   }
   li.appendChild(link);
 
